@@ -429,11 +429,17 @@ select {
 }
 
 @media (min-width: 768px) {
-  input,
-  select {
+  input {
     padding: 12px 14px;
     font-size: 0.95rem;
     min-height: auto;
+  }
+  
+  select {
+    padding: 14px 16px; /* Keep larger padding for select */
+    font-size: 16px; /* Keep larger font for select */
+    min-height: 54px; /* Even taller than mobile! */
+    height: 54px; /* Force height */
   }
 }
 
