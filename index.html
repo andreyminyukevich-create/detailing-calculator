@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Калькулятор оклейки</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<style>
+.m-calc-wrapper *{box-sizing:border-box;margin:0;padding:0}
+.m-calc-wrapper{--bg:#f8fafc;--card:#fff;--text:#334155;--text-muted:#64748b;--border:#e2e8f0;--primary:#3b82f6;--success:#10b981;--shadow:0 1px 3px rgba(0,0,0,0.1);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;transition:all .3s;-webkit-tap-highlight-color:transparent;padding-top:50px}
+.m-calc-wrapper[data-theme="dark"]{--bg:#1e293b;--card:#334155;--text:#f1f5f9;--text-muted:#94a3b8;--border:#475569;--shadow:0 4px 6px rgba(0,0,0,0.3)}
+.m-top-bar{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--card);border-bottom:1px solid var(--border);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between;padding:8px 16px}
+.m-top-bar h1{font-size:1rem;font-weight:600}
+.m-theme-toggle{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:6px 10px;cursor:pointer;box-shadow:var(--shadow);font-size:11px;font-weight:500;min-height:34px;display:flex;align-items:center}
+.m-main-container{display:flex;min-height:100vh;gap:20px;padding:10px;flex-direction:column}
+.m-card{background:var(--card);border-radius:12px;box-shadow:var(--shadow);padding:16px;margin-bottom:15px;border:1px solid var(--border)}
+.m-card h2{font-size:1.1rem;font-weight:600;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px;cursor:pointer;min-height:44px}
+.m-card h2::before{content:'';width:3px;height:16px;background:linear-gradient(135deg,var(--primary),#1d4ed8);border-radius:2px}
+.m-card h2.m-collapsible::after{content:'▼';margin-left:auto;transition:transform .2s;font-size:.8rem}
+.m-card h2.m-collapsible.m-collapsed::after{transform:rotate(-90deg)}
+.m-card-content{transition:all .3s}
+.m-card-content.m-collapsed{display:none}
+.m-form-group{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.m-service-item{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:12px}
+.m-service-header{display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none}
+.m-service-header input[type="checkbox"]{width:20px;height:20px;margin:0;cursor:pointer}
+.m-service-header label{font-weight:600;color:var(--text);font-size:.95rem;margin:0;cursor:pointer;flex:1}
+.m-service-body{margin-top:12px;display:none}
+.m-service-body.m-open{display:block}
+.m-service-fields{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:10px}
+.m-service-complexity{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--text-muted)}
+.m-service-complexity input[type="checkbox"]{width:18px;height:18px;margin:0}
+.m-partial-wrapper{margin:20px 0}
+.m-partial-header{display:flex;align-items:center;gap:12px;cursor:pointer;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;user-select:none}
+.m-partial-header input[type="checkbox"]{width:20px;height:20px;margin:0;cursor:pointer}
+.m-partial-header label{font-weight:600;color:var(--text);font-size:.95rem;margin:0;cursor:pointer;flex:1}
+.m-partial-content{margin-top:12px;padding-left:32px;display:none}
+.m-partial-content.m-open{display:block}
+.m-calc-wrapper label{font-weight:500;color:var(--text-muted);margin-bottom:4px;display:block;font-size:.9rem}
+.m-markup-label{color:#d97706;font-weight:600}
+.m-calc-wrapper input,.m-calc-wrapper select{padding:12px;border:1px solid var(--border);border-radius:6px;font-size:16px;transition:all .2s;background:var(--card);color:var(--text);width:100%;min-height:44px}
+.m-calc-wrapper input.m-markup-warning{background:#fef3c7;border-color:#f59e0b}
+.m-calc-wrapper input:focus,.m-calc-wrapper select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+.m-calc-wrapper input:read-only{background:var(--bg);color:var(--text-muted)}
+.m-btn{padding:12px 16px;border:none;border-radius:6px;font-size:15px;font-weight:500;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;touch-action:manipulation}
+.m-btn-primary{background:linear-gradient(135deg,var(--primary),#1d4ed8);color:#fff}
+.m-btn-primary:active{transform:scale(0.98)}
+.m-btn-secondary{background:var(--card);color:var(--text);border:1px solid var(--border)}
+.m-btn-secondary:active{background:var(--border)}
+.m-btn-success{background:linear-gradient(135deg,var(--success),#059669);color:#fff}
+.m-btn-success:active{transform:scale(0.98)}
+.m-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.m-chip{padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:16px;font-size:.9rem;cursor:pointer;transition:all .2s;color:var(--text);min-height:40px;display:flex;align-items:center;touch-action:manipulation}
+.m-chip:active{background:var(--border);transform:scale(0.95)}
+.m-discount-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+.m-discount-btn{padding:12px;background:#fef3c7;border:1px solid #fbbf24;border-radius:6px;font-size:.9rem;cursor:pointer;transition:all .2s;text-align:center;min-height:44px;display:flex;align-items:center;justify-content:center;touch-action:manipulation;color:#000}
+.m-discount-btn:active{background:#fde68a;transform:scale(0.95)}
+.m-discount-btn.m-active{background:#f59e0b;color:#fff}
+.m-calc-wrapper[data-theme="dark"] .m-discount-btn{color:#000}
+.m-calc-wrapper[data-theme="dark"] .m-discount-btn.m-active{color:#fff}
+.m-table-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.m-calc-wrapper table{width:100%;border-collapse:collapse;font-size:.75rem;margin-top:12px;min-width:600px}
+.m-calc-wrapper th,.m-calc-wrapper td{padding:8px 6px;text-align:center;border:1px solid var(--border)}
+.m-calc-wrapper th{background:var(--border);font-weight:600;color:var(--text);font-size:.8rem}
+.m-calc-wrapper tbody tr:hover{background:var(--border)}
+.m-totals-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px}
+.m-total-item{text-align:center;padding:12px;background:var(--border);border-radius:6px;min-height:60px;display:flex;flex-direction:column;justify-content:center}
+.m-total-label{font-size:.85rem;color:var(--text-muted);margin-bottom:4px}
+.m-total-value{font-size:1.1rem;font-weight:600;color:var(--text)}
+.m-final-total{background:linear-gradient(135deg,var(--success),#059669);color:#fff}
+.m-final-total .m-total-value{color:#fff;font-size:1.3rem}
+.m-final-total .m-total-label{color:#fff}
+.m-chart-container{position:relative;height:180px;margin-top:12px}
+.m-toggle-group{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.m-toggle-btn{flex:1;min-width:calc(50% - 3px);justify-content:center;padding:10px;font-size:.85rem;background:var(--card);border:1px solid var(--border);border-radius:6px;cursor:pointer;transition:all .2s;min-height:44px;display:flex;align-items:center;touch-action:manipulation}
+.m-toggle-btn.m-active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.m-toggle-btn:active{transform:scale(0.98)}
+.m-export-buttons{display:flex;gap:8px;flex-wrap:wrap;flex-direction:column}
+.m-export-buttons .m-btn{flex:1;width:100%;justify-content:center;font-size:.9rem;padding:12px}
+.m-package-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px}
+.m-invis{display:none!important}
+#m-telegramWarning{display:none;background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:12px;margin-bottom:12px;font-size:.9rem;color:#856404}
+.m-calc-wrapper[data-theme="dark"] #m-telegramWarning{background:#664d03;border-color:#997404;color:#ffecb5}
+#m-pdfTemplates{display:none;font-family:Arial,sans-serif;font-size:12px;line-height:1.4}
+#m-pdfTemplates .m-pdf-block{width:210mm;min-height:297mm;padding:20mm;background:#fff;color:#000}
+#m-pdfTemplates h1{font-size:18px;margin-bottom:10px;text-align:center}
+#m-pdfTemplates table{width:100%;border-collapse:collapse;margin:10px 0}
+#m-pdfTemplates th,#m-pdfTemplates td{border:1px solid #333;padding:5px;text-align:left}
+#m-pdfTemplates th{background:#f0f0f0;font-weight:bold}
+</style>
+</head>
+<body>
+<div class="m-calc-wrapper">
+<div class="m-top-bar">
+<h1>Калькулятор оклейки</h1>
+<div class="m-theme-toggle" onclick="mToggleTheme()"><span id="m-theme-icon">Темная</span></div>
+</div>
+<div class="m-main-container">
+<div class="m-card">
+<h2>Автомобиль</h2>
+<div class="m-card-content">
+<div class="m-form-group">
+<label>Бренд:</label>
+<select id="m-brand">
+<option value="">Выберите бренд</option>
+<option value="manual">Ввести вручную бренд и модель</option>
+</select>
+<input type="text" id="m-brandManual" placeholder="Введите бренд" class="m-invis">
+</div>
+<div class="m-form-group">
+<label>Модель:</label>
+<select id="m-model">
+<option value="">Сначала выберите бренд</option>
+<option value="manual">Ввести вручную</option>
+</select>
+<input type="text" id="m-modelManual" placeholder="Введите модель" class="m-invis">
+</div>
+<div class="m-form-group">
+<label>Год:</label>
+<input type="number" id="m-year" min="1990" max="2030" placeholder="2020">
+</div>
+</div>
+</div>
+
+<div class="m-card">
+<h2 class="m-collapsible m-collapsed">Полная защита вкруг</h2>
+<div class="m-card-content m-collapsed">
+<div class="m-package-grid">
+<div><label>Стоимость пленки:</label><input type="number" id="m-pkgWrapMat" placeholder="0" step="0.01"></div>
+<div><label>Мотивация оклейщика:</label><input type="number" id="m-pkgWrapMot" placeholder="0" step="0.01"></div>
+<div><label>Материалы подготовки:</label><input type="number" id="m-pkgPrepMat" placeholder="0" step="0.01"></div>
+<div><label>Мотивация подготовки:</label><input type="number" id="m-pkgPrepMot" placeholder="0" step="0.01"></div>
+<div><label>Материал арматурки:</label><input type="number" id="m-pkgArmMat" placeholder="0" step="0.01"></div>
+<div><label>Мотивация арматурщика:</label><input type="number" id="m-pkgArmMot" placeholder="0" step="0.01"></div>
+</div>
+<div class="m-partial-wrapper">
+<div class="m-partial-header">
+<input type="checkbox" id="m-pkgCostsChk">
+<label for="m-pkgCostsChk">Дополнительные затраты</label>
+</div>
+<div class="m-partial-content" id="m-pkgCostsContent"></div>
+</div>
+<button type="button" class="m-btn m-btn-secondary" id="m-btnAddPkgCost" style="margin-top:10px;display:none">Добавить затрату</button>
+<div style="margin-top:15px">
+<label class="m-markup-label">⚠️ Наценка на пакет (%):</label>
+<input type="number" id="m-pkgMarkup" placeholder="0" step="1">
+<div class="m-chips">
+<span class="m-chip" data-markup-target="#m-pkgMarkup">10</span>
+<span class="m-chip" data-markup-target="#m-pkgMarkup">20</span>
+<span class="m-chip" data-markup-target="#m-pkgMarkup">30</span>
+<span class="m-chip" data-markup-target="#m-pkgMarkup">40</span>
+<span class="m-chip" data-markup-target="#m-pkgMarkup">50</span>
+<span class="m-chip" data-markup-target="#m-pkgMarkup">60</span>
+<span class="m-chip" data-markup-target="#m-pkgMarkup">70</span>
+<span class="m-chip" data-markup-target="#m-pkgMarkup">80</span>
+<span class="m-chip" data-markup-target="#m-pkgMarkup">90</span>
+<span class="m-chip" data-markup-target="#m-pkgMarkup">100</span>
+</div>
+</div>
+</div>
+</div>
+
+<div class="m-card">
+<h2>Форма оплаты</h2>
+<div class="m-card-content">
+<div class="m-toggle-group">
+<label class="m-toggle-btn m-active"><input type="radio" name="m-payMode" value="cash" checked style="display:none"><span>Наличные (0%)</span></label>
+<label class="m-toggle-btn"><input type="radio" name="m-payMode" value="card" style="display:none"><span>Карта (+8%)</span></label>
+<label class="m-toggle-btn"><input type="radio" name="m-payMode" value="ip" style="display:none"><span>ИП (+8%)</span></label>
+<label class="m-toggle-btn"><input type="radio" name="m-payMode" value="ooo" style="display:none"><span>ООО (+20%)</span></label>
+</div>
+</div>
+</div>
+
+<div class="m-card">
+<h2 class="m-collapsible m-collapsed">Арматурные работы</h2>
+<div class="m-card-content m-collapsed" id="m-armContent"></div>
+</div>
+
+<div class="m-card">
+<h2 class="m-collapsible m-collapsed">Оклейка автомобиля</h2>
+<div class="m-card-content m-collapsed" id="m-wrapContent"></div>
+</div>
+
+<div class="m-card">
+<h2 class="m-collapsible m-collapsed">Детейлинг</h2>
+<div class="m-card-content m-collapsed" id="m-detContent"></div>
+</div>
+
+<div class="m-card">
+<h2 class="m-collapsible m-collapsed">Стёкла</h2>
+<div class="m-card-content m-collapsed" id="m-glContent"></div>
+</div>
+
+<div class="m-card">
+<h2 class="m-collapsible m-collapsed">Прочие работы</h2>
+<div class="m-card-content m-collapsed" id="m-miscContent"></div>
+</div>
+
+<div class="m-card">
+<h2>Итоги по направлениям</h2>
+<div class="m-card-content" id="m-summaryContent"></div>
+</div>
+
+<div class="m-card">
+<h2>Скидки</h2>
+<div class="m-card-content">
+<div class="m-discount-grid">
+<div class="m-discount-btn" data-discount="0">0%</div>
+<div class="m-discount-btn" data-discount="5">5%</div>
+<div class="m-discount-btn" data-discount="10">10%</div>
+<div class="m-discount-btn" data-discount="15">15%</div>
+<div class="m-discount-btn" data-discount="20">20%</div>
+<div class="m-discount-btn" data-discount="25">25%</div>
+</div>
+<div style="margin-top:8px">
+<input type="number" id="m-customDiscount" placeholder="Своя скидка %" min="0" max="100" step="0.01">
+</div>
+</div>
+</div>
+
+<div class="m-card">
+<h2>Итоги</h2>
+<div class="m-card-content">
+<div class="m-totals-grid">
+<div class="m-total-item"><div class="m-total-label">Материалы</div><div class="m-total-value" id="m-grandMat">0,00</div></div>
+<div class="m-total-item"><div class="m-total-label">Мотивация</div><div class="m-total-value" id="m-grandMot">0,00</div></div>
+<div class="m-total-item"><div class="m-total-label">Себестоимость</div><div class="m-total-value" id="m-grandBase">0,00</div></div>
+<div class="m-total-item"><div class="m-total-label">Наценка</div><div class="m-total-value" id="m-grandMarkup">0,00</div></div>
+<div class="m-total-item"><div class="m-total-label">Налог</div><div class="m-total-value" id="m-grandTax">0,00</div></div>
+<div class="m-total-item m-final-total"><div class="m-total-label">ИТОГО К ОПЛАТЕ</div><div class="m-total-value" id="m-finalTotal">0,00</div></div>
+</div>
+<div class="m-chart-container"><canvas id="m-pieChart"></canvas></div>
+</div>
+</div>
+
+<div class="m-card">
+<h2>Предпросмотр КП</h2>
+<div class="m-card-content">
+<div class="m-table-wrapper">
+<table id="m-kpTable">
+<thead><tr><th style="width:25%">Услуга</th><th style="width:50%">Описание</th><th style="width:25%">Стоимость</th></tr></thead>
+<tbody></tbody>
+</table>
+</div>
+<div style="text-align:right;font-weight:bold;margin-top:10px">Итого: <span id="m-kpTotal">0,00</span> ₽</div>
+</div>
+</div>
+
+<div class="m-card">
+<h2>Предпросмотр себестоимости</h2>
+<div class="m-card-content">
+<div class="m-table-wrapper">
+<table id="m-costTable">
+<thead><tr><th style="width:50%">Услуга</th><th style="width:25%">Материалы</th><th style="width:25%">Мотивация</th></tr></thead>
+<tbody></tbody>
+</table>
+</div>
+<div style="display:flex;justify-content:space-between;font-weight:bold;margin-top:10px;flex-wrap:wrap;gap:10px;font-size:.9rem">
+<span>Материалы: <span id="m-cMat">0,00</span> ₽</span>
+<span>Мотивация: <span id="m-cMot">0,00</span> ₽</span>
+<span>Итого: <span id="m-cTotal">0,00</span> ₽</span>
+</div>
+</div>
+</div>
+
+<div class="m-card">
+<h2>Предпросмотр перечня работ</h2>
+<div class="m-card-content">
+<div class="m-table-wrapper">
+<table id="m-workTable">
+<thead><tr><th style="width:35%">Услуга</th><th style="width:20%">Исполнитель</th><th style="width:15%">Дата приема</th><th style="width:15%">Дата выдачи</th><th style="width:15%">Подпись</th></tr></thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="m-card">
+<h2>Экспорт</h2>
+<div class="m-card-content">
+<div id="m-telegramWarning" style="display:none;background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:12px;margin-bottom:12px;font-size:.9rem">
+⚠️ <b>Telegram WebView:</b> Для полноценного скачивания PDF откройте сайт в браузере (кнопка "•••" → "Открыть в браузере")
+</div>
+<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+<button type="button" class="m-btn m-btn-primary" id="m-btnRecalc" style="flex:1;min-width:140px">Пересчитать</button>
+<button type="button" class="m-btn m-btn-secondary" id="m-btnReset" style="flex:1;min-width:140px">Сброс</button>
+</div>
+<div class="m-export-buttons">
+<button type="button" class="m-btn m-btn-success" id="m-btnExportKP">КП (PDF)</button>
+<button type="button" class="m-btn m-btn-success" id="m-btnExportCost">Себес (PDF)</button>
+<button type="button" class="m-btn m-btn-success" id="m-btnExportWork">Перечень работ (PDF)</button>
+</div>
+</div>
+</div>
+</div>
+
+<div id="m-pdfTemplates">
+<div id="m-pdfKP" class="m-pdf-block">
+<h1>КОММЕРЧЕСКОЕ ПРЕДЛОЖЕНИЕ</h1>
+<p id="m-pdfKPMeta" style="text-align:center;margin-bottom:20px"></p>
+<table>
+<thead><tr><th style="width:25%">Услуга</th><th style="width:50%">Описание</th><th style="width:25%">Стоимость</th></tr></thead>
+<tbody id="m-pdfKPTBody"></tbody>
+<tfoot><tr><th colspan="2">ИТОГО:</th><th id="m-pdfKPTotal"></th></tr></tfoot>
+</table>
+<p style="text-align:center;margin-top:20px;font-style:italic">Коммерческое предложение актуально в течение 3х дней</p>
+</div>
+<div id="m-pdfCost" class="m-pdf-block">
+<h1>СЕБЕСТОИМОСТЬ</h1>
+<p id="m-pdfCostMeta" style="text-align:center;margin-bottom:20px"></p>
+<table>
+<thead><tr><th>Услуга</th><th>Материалы</th><th>Мотивация</th></tr></thead>
+<tbody id="m-pdfCostTBody"></tbody>
+<tfoot><tr><th>ИТОГО:</th><th id="m-pdfCM"></th><th id="m-pdfCO"></th></tr></tfoot>
+</table>
+</div>
+<div id="m-pdfWork" class="m-pdf-block">
+<h1>ПЕРЕЧЕНЬ РАБОТ</h1>
+<p id="m-pdfWorkMeta" style="text-align:center;margin-bottom:20px"></p>
+<table style="font-size:11px">
+<thead><tr><th style="width:35%">Услуга</th><th style="width:20%">Исполнитель</th><th style="width:15%">Дата приема</th><th style="width:15%">Дата выдачи</th><th style="width:15%">Подпись</th></tr></thead>
+<tbody id="m-pdfWorkTBody"></tbody>
+</table>
+</div>
+</div>
+</div>
+
+<script>
+(function(){
+'use strict';
+const q=s=>document.querySelector(s),qa=s=>document.querySelectorAll(s);
+const fmt=n=>parseFloat((n||0).toFixed(2)).toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2}),r100=n=>Math.round((n||0)*100)/100;
+let disc=0,chart=null;
+
+window.mToggleTheme=function(){
+const w=q('.m-calc-wrapper'),i=q('#m-theme-icon');
+if(w.getAttribute('data-theme')==='dark'){
+w.removeAttribute('data-theme');i.textContent='Темная';localStorage.setItem('m-theme','light');
+}else{w.setAttribute('data-theme','dark');i.textContent='Светлая';localStorage.setItem('m-theme','dark');}
+};
+
+const carDB={
+Audi:["A3","A4","A5","A6","Q3","Q5","Q7","Q8"],
+BMW:["1 Series","3 Series","5 Series","7 Series","X3","X5"],
+BYD:["Dolphin","Han","Qin Plus","Seal","Song Plus","Tang","Yuan Plus"],
+Changan:["CS35 Plus","CS55 Plus","CS75 Plus","Uni-K","Uni-T"],
+Chery:["Arrizo 5","Tiggo 2","Tiggo 4","Tiggo 7","Tiggo 8"],
+Ford:["Explorer","F-150","Fiesta","Focus","Mustang"],
+Geely:["Atlas","Coolray","Emgrand","Monjaro","Tugella"],
+Haval:["Dargo","F7","F7x","H6","H9","Jolion"],
+Honda:["Accord","Civic","CR-V","Fit","HR-V"],
+Hyundai:["Creta","Elantra","Santa Fe","Sonata","Tucson"],
+Kia:["Cerato","Ceed","Rio","Seltos","Sorento","Sportage"],
+Lixiang:["I8","L6","L7","L8","L9","Mega","One"],
+Mazda:["CX-3","CX-30","CX-5","Mazda3","Mazda6"],
+"Mercedes-Benz":["A-Class","C-Class","E-Class","GLC","GLE","S-Class"],
+Nissan:["Altima","Qashqai","Rogue","Sentra","X-Trail"],
+Omoda:["C5","C7","C9","E5","S5"],
+Tank:["300","400","500","700"],
+Tesla:["Model 3","Model S","Model X","Model Y"],
+Toyota:["Camry","Corolla","Hilux","Land Cruiser 300","RAV4","Yaris"],
+Volkswagen:["Arteon","Golf","Passat","Polo","T-Roc","Tiguan"],
+Voyah:["Courage","Dream","Free","Passion"],
+Zeekr:["001","007","009","7X","9X","Mix","X"]
+};
+
+const partElements=['Передний бампер','Задний бампер','Передний бампер (доп)','Задний бампер (доп)','Передняя оптика','Противотуманные фары','Задние фонари','Решетка радиатора','Полоска на капот','Капот','Переднее крыло','Два передних крыла','Расширители арок','Стойки вокруг лобового','Полоска на крышу','Крыша','Пороги','Пороги до замка','Дверные проемы','Передняя дверь','Передние двери (2 шт)','Зона под ручками (2 шт)','Зона под ручками (4 шт)','Задняя дверь','Задние двери (2 шт)','Заднее крыло','Задние крылья (2 шт)','Крышка багажника','Багажник (доп)','Оклейка элементов интерьера','Антихром'];
+
+const armServices=['Демонтаж элементов','Монтаж элементов','Демонтаж и монтаж'];
+const detailServices=['Мойка кузова перед оклейкой','Подготовка кузова','Глубокая чистка кузова','Полировка кузова','Нанесение составов на кузов','Химчистка салона','Нанесение составов на элементы салона','Полировка глянцевых элементов'];
+const glassServices=['Тонирование задней полусферы','Тонирование передних боковых стекол','Тонирование лобового стекла','Бронирование лобового стекла'];
+const miscServices=['Малярные работы','Выпрямление вмятин без покраски','Реставрация ЛКП','Шумоизоляция'];
+
+function fillBrands(){
+const s=q('#m-brand');
+s.innerHTML='<option value="">Выберите бренд</option><option value="manual">Ввести вручную бренд и модель</option>';
+Object.keys(carDB).sort().forEach(b=>{
+const o=document.createElement('option');
+o.value=b;o.textContent=b;s.appendChild(o);
+});
+}
+
+function renderServiceList(containerId,services,classPrefix){
+const container=q(containerId);
+let html='';
+services.forEach((name,idx)=>{
+html+=`<div class="m-service-item">
+<div class="m-service-header">
+<input type="checkbox" class="${classPrefix}-chk" id="m-${classPrefix}${idx+1}">
+<label for="m-${classPrefix}${idx+1}">${name}</label>
+</div>
+<div class="m-service-body">
+<div class="m-service-fields">
+<div class="m-form-group"><label>Материалы (₽):</label><input type="number" class="${classPrefix}-mat" placeholder="0" step="0.01"></div>
+<div class="m-form-group"><label>Мотивация (₽):</label><input type="number" class="${classPrefix}-mot" placeholder="0" step="0.01"></div>
+</div>
+<div class="m-service-complexity">
+<input type="checkbox" class="${classPrefix}-complex" id="m-${classPrefix}${idx+1}c">
+<label for="m-${classPrefix}${idx+1}c">Усложнение +10%</label>
+</div>
+</div>
+</div>`;
+});
+html+=`<div id="m-${classPrefix}Dyn"></div>
+<button type="button" class="m-btn m-btn-secondary" id="m-btnAdd${classPrefix.charAt(0).toUpperCase()+classPrefix.slice(1)}">Дополнительно</button>
+<div class="m-partial-wrapper">
+<div class="m-partial-header">
+<input type="checkbox" id="m-${classPrefix}CostsChk">
+<label for="m-${classPrefix}CostsChk">Дополнительные затраты</label>
+</div>
+<div class="m-partial-content" id="m-${classPrefix}CostsContent"></div>
+</div>
+<button type="button" class="m-btn m-btn-secondary" id="m-btnAdd${classPrefix.charAt(0).toUpperCase()+classPrefix.slice(1)}Cost" style="margin-top:10px;display:none">Добавить затрату</button>
+<div style="margin-top:15px">
+<label class="m-markup-label">Наценка (%):</label>
+<input type="number" id="m-${classPrefix}Markup" placeholder="0" step="1">
+<div class="m-chips">
+<span class="m-chip" data-markup-target="#m-${classPrefix}Markup">10</span>
+<span class="m-chip" data-markup-target="#m-${classPrefix}Markup">20</span>
+<span class="m-chip" data-markup-target="#m-${classPrefix}Markup">30</span>
+<span class="m-chip" data-markup-target="#m-${classPrefix}Markup">40</span>
+<span class="m-chip" data-markup-target="#m-${classPrefix}Markup">50</span>
+<span class="m-chip" data-markup-target="#m-${classPrefix}Markup">60</span>
+<span class="m-chip" data-markup-target="#m-${classPrefix}Markup">70</span>
+<span class="m-chip" data-markup-target="#m-${classPrefix}Markup">80</span>
+<span class="m-chip" data-markup-target="#m-${classPrefix}Markup">90</span>
+<span class="m-chip" data-markup-target="#m-${classPrefix}Markup">100</span>
+</div>
+</div>`;
+container.innerHTML=html;
+}
+
+function renderWrapContent(){
+const container=q('#m-wrapContent');
+let html=`<h3 style="margin-bottom:10px;font-size:1.05rem">PPF</h3>
+<div class="m-service-item">
+<div class="m-service-header"><input type="checkbox" id="m-ppfClearChk"><label for="m-ppfClearChk">PPF прозрачный вкруг</label></div>
+<div class="m-service-body">
+<div class="m-service-fields">
+<div class="m-form-group"><label>Метры (м):</label><input type="number" id="m-ppfClearM" placeholder="0" step="0.01"></div>
+<div class="m-form-group"><label>Цена за метр (₽):</label><input type="number" id="m-ppfClearPrice" placeholder="0" step="0.01"></div>
+<div class="m-form-group"><label>Мотивация (₽):</label><input type="number" id="m-ppfClearMot" placeholder="0" step="0.01"></div>
+</div>
+<div class="m-service-complexity"><input type="checkbox" id="m-ppfClearComplex"><label for="m-ppfClearComplex">Усложнение +10%</label></div>
+</div>
+</div>
+<div class="m-service-item">
+<div class="m-service-header"><input type="checkbox" id="m-ppfColorChk"><label for="m-ppfColorChk">PPF цветной вкруг</label></div>
+<div class="m-service-body">
+<div class="m-service-fields">
+<div class="m-form-group"><label>Метры (м):</label><input type="number" id="m-ppfColorM" placeholder="0" step="0.01"></div>
+<div class="m-form-group"><label>Цена за метр (₽):</label><input type="number" id="m-ppfColorPrice" placeholder="0" step="0.01"></div>
+<div class="m-form-group"><label>Мотивация (₽):</label><input type="number" id="m-ppfColorMot" placeholder="0" step="0.01"></div>
+</div>
+<div class="m-service-complexity"><input type="checkbox" id="m-ppfColorComplex"><label for="m-ppfColorComplex">Усложнение +10%</label></div>
+</div>
+</div>
+<div class="m-service-item">
+<div class="m-service-header"><input type="checkbox" id="m-ppfMatChk"><label for="m-ppfMatChk">PPF матовый вкруг</label></div>
+<div class="m-service-body">
+<div class="m-service-fields">
+<div class="m-form-group"><label>Метры (м):</label><input type="number" id="m-ppfMatM" placeholder="0" step="0.01"></div>
+<div class="m-form-group"><label>Цена за метр (₽):</label><input type="number" id="m-ppfMatPrice" placeholder="0" step="0.01"></div>
+<div class="m-form-group"><label>Мотивация (₽):</label><input type="number" id="m-ppfMatMot" placeholder="0" step="0.01"></div>
+</div>
+<div class="m-service-complexity"><input type="checkbox" id="m-ppfMatComplex"><label for="m-ppfMatComplex">Усложнение +10%</label></div>
+</div>
+</div>
+<div class="m-partial-wrapper">
+<div class="m-partial-header"><input type="checkbox" id="m-ppfPartChk"><label for="m-ppfPartChk">PPF частично</label></div>
+<div class="m-partial-content" id="m-ppfPartContent"></div>
+</div>
+<h3 style="margin:20px 0 10px;font-size:1.05rem">PVC</h3>
+<div class="m-service-item">
+<div class="m-service-header"><input type="checkbox" id="m-pvcFullChk"><label for="m-pvcFullChk">ПВХ полная оклейка</label></div>
+<div class="m-service-body">
+<div class="m-service-fields">
+<div class="m-form-group"><label>Метры (м):</label><input type="number" id="m-pvcFullM" placeholder="0" step="0.01"></div>
+<div class="m-form-group"><label>Цена за метр (₽):</label><input type="number" id="m-pvcFullPrice" placeholder="0" step="0.01"></div>
+<div class="m-form-group"><label>Мотивация (₽):</label><input type="number" id="m-pvcFullMot" placeholder="0" step="0.01"></div>
+</div>
+<div class="m-service-complexity"><input type="checkbox" id="m-pvcFullComplex"><label for="m-pvcFullComplex">Усложнение +10%</label></div>
+</div>
+</div>
+<div class="m-partial-wrapper">
+<div class="m-partial-header"><input type="checkbox" id="m-pvcPartChk"><label for="m-pvcPartChk">ПВХ частично</label></div>
+<div class="m-partial-content" id="m-pvcPartContent"></div>
+</div>
+<div id="m-wrapDyn"></div>
+<button type="button" class="m-btn m-btn-secondary" id="m-btnAddWrap">Дополнительно</button>
+<div class="m-partial-wrapper">
+<div class="m-partial-header">
+<input type="checkbox" id="m-wrapCostsChk">
+<label for="m-wrapCostsChk">Дополнительные затраты</label>
+</div>
+<div class="m-partial-content" id="m-wrapCostsContent"></div>
+</div>
+<button type="button" class="m-btn m-btn-secondary" id="m-btnAddWrapCost" style="margin-top:10px;display:none">Добавить затрату</button>
+<div style="margin-top:20px">
+<label class="m-markup-label">⚠️ Наценка на оклейку (%):</label>
+<input type="number" id="m-wrapMarkup" placeholder="0" step="1">
+<div class="m-chips">
+<span class="m-chip" data-markup-target="#m-wrapMarkup">10</span>
+<span class="m-chip" data-markup-target="#m-wrapMarkup">20</span>
+<span class="m-chip" data-markup-target="#m-wrapMarkup">30</span>
+<span class="m-chip" data-markup-target="#m-wrapMarkup">40</span>
+<span class="m-chip" data-markup-target="#m-wrapMarkup">50</span>
+<span class="m-chip" data-markup-target="#m-wrapMarkup">60</span>
+<span class="m-chip" data-markup-target="#m-wrapMarkup">70</span>
+<span class="m-chip" data-markup-target="#m-wrapMarkup">80</span>
+<span class="m-chip" data-markup-target="#m-wrapMarkup">90</span>
+<span class="m-chip" data-markup-target="#m-wrapMarkup">100</span>
+</div>
+</div>`;
+container.innerHTML=html;
+}
+
+function renderPartialLists(){
+const ppf=q('#m-ppfPartContent'),pvc=q('#m-pvcPartContent');
+let ppfHtml='',pvcHtml='';
+partElements.forEach((name,idx)=>{
+ppfHtml+=`<div class="m-service-item">
+<div class="m-service-header"><input type="checkbox" class="ppf-part-chk" id="m-ppfp${idx}"><label for="m-ppfp${idx}">${name}</label></div>
+<div class="m-service-body">
+<div class="m-service-fields">
+<div class="m-form-group"><label>Метры (м):</label><input type="number" class="ppf-part-m" placeholder="0" step="0.01"></div>
+<div class="m-form-group"><label>Цена за метр (₽):</label><input type="number" class="ppf-part-price" placeholder="0" step="0.01"></div>
+<div class="m-form-group"><label>Мотивация (₽):</label><input type="number" class="ppf-part-mot" placeholder="0" step="0.01"></div>
+<div class="m-form-group"><label>Своя наценка (%):</label><input type="number" class="ppf-part-markup" placeholder="0"></div>
+</div>
+<div class="m-service-complexity"><input type="checkbox" class="ppf-part-complex" id="m-ppfp${idx}c"><label for="m-ppfp${idx}c">Усложнение +10%</label></div>
+</div>
+</div>`;
+pvcHtml+=`<div class="m-service-item">
+<div class="m-service-header"><input type="checkbox" class="pvc-part-chk" id="m-pvcp${idx}"><label for="m-pvcp${idx}">${name}</label></div>
+<div class="m-service-body">
+<div class="m-service-fields">
+<div class="m-form-group"><label>Метры (м):</label><input type="number" class="pvc-part-m" placeholder="0" step="0.01"></div>
+<div class="m-form-group"><label>Цена за метр (₽):</label><input type="number" class="pvc-part-price" placeholder="0" step="0.01"></div>
+<div class="m-form-group"><label>Мотивация (₽):</label><input type="number" class="pvc-part-mot" placeholder="0" step="0.01"></div>
+<div class="m-form-group"><label>Своя наценка (%):</label><input type="number" class="pvc-part-markup" placeholder="0"></div>
+</div>
+<div class="m-service-complexity"><input type="checkbox" class="pvc-part-complex" id="m-pvcp${idx}c"><label for="m-pvcp${idx}c">Усложнение +10%</label></div>
+</div>
+</div>`;
+});
+ppf.innerHTML=ppfHtml;
+pvc.innerHTML=pvcHtml;
+}
+
+function renderSummaryCards(){
+const container=q('#m-summaryContent');
+const sections=[
+{id:'Pkg',label:'Полная защита'},
+{id:'Arm',label:'Арматурные'},
+{id:'Wrap',label:'Оклейка'},
+{id:'Det',label:'Детейлинг'},
+{id:'Gl',label:'Стёкла'},
+{id:'Misc',label:'Прочие'}
+];
+let html='';
+sections.forEach(s=>{
+html+=`<div class="m-service-item" id="m-sum${s.id}Card">
+<div class="m-service-header"><label style="flex:1">${s.label}</label></div>
+<div class="m-service-fields" style="display:grid">
+<div class="m-form-group"><label>Материалы:</label><input type="number" id="m-sum${s.id}Mat" readonly step="0.01"></div>
+<div class="m-form-group"><label>Мотивация:</label><input type="number" id="m-sum${s.id}Mot" readonly step="0.01"></div>
+<div class="m-form-group"><label>Себестоимость:</label><input type="number" id="m-seb${s.id}" readonly step="0.01"></div>
+</div>
+</div>`;
+});
+container.innerHTML=html;
+}
+
+function onBrandChange(){
+const b=q('#m-brand').value,m=q('#m-model'),bm=q('#m-brandManual');
+m.innerHTML='<option value="">Сначала выберите бренд</option><option value="manual">Ввести вручную</option>';
+if(b&&carDB[b]){
+bm.classList.add('m-invis');
+carDB[b].forEach(md=>{
+const o=document.createElement('option');
+o.value=md;o.textContent=md;m.appendChild(o);
+});
+}else if(b==='manual'){
+bm.classList.remove('m-invis');
+m.innerHTML='<option value="manual">Ввести вручную</option>';
+}
+}
+
+function onModelChange(){
+const m=q('#m-model').value,mm=q('#m-modelManual');
+if(m==='manual')mm.classList.remove('m-invis');else mm.classList.add('m-invis');
+}
+
+let dynCounter=0;
+function addDynRow(id,cls){
+const c=q(id);
+const d=document.createElement('div');
+d.className='m-service-item';
+dynCounter++;
+d.innerHTML=`<div class="m-service-header">
+<input type="checkbox" checked id="m-dyn${cls}${dynCounter}">
+<label for="m-dyn${cls}${dynCounter}"><input type="text" placeholder="Название услуги" style="border:none;background:transparent;padding:0;font-weight:600;font-size:.95rem;color:var(--text)"></label>
+</div>
+<div class="m-service-body m-open">
+<div class="m-service-fields">
+<div class="m-form-group"><label>Материалы (₽):</label><input type="number" class="${cls}-mat" placeholder="0" step="0.01"></div>
+<div class="m-form-group"><label>Мотивация (₽):</label><input type="number" class="${cls}-mot" placeholder="0" step="0.01"></div>
+</div>
+<div class="m-service-complexity">
+<input type="checkbox" class="${cls}-complex" id="m-dyn${cls}${dynCounter}c">
+<label for="m-dyn${cls}${dynCounter}c">Усложнение +10%</label>
+</div>
+</div>`;
+c.appendChild(d);
+}
+
+function addCostRow(id,cls){
+const c=q(id);
+const d=document.createElement('div');
+d.className='m-service-item';
+dynCounter++;
+d.innerHTML=`<div class="m-service-header">
+<label style="flex:1"><input type="text" placeholder="Название затрат" class="${cls}-cost-name" style="border:none;background:transparent;padding:0;font-weight:600;font-size:.95rem;color:var(--text);width:100%"></label>
+</div>
+<div class="m-service-body m-open">
+<div class="m-service-fields">
+<div class="m-form-group"><label>Сумма (₽):</label><input type="number" class="${cls}-cost-amt" placeholder="0" step="0.01"></div>
+</div>
+</div>`;
+c.appendChild(d);
+}
+
+function initServiceToggles(){
+qa('.m-service-item').forEach(item=>{
+const chk=item.querySelector('.m-service-header input[type="checkbox"]');
+const body=item.querySelector('.m-service-body');
+const header=item.querySelector('.m-service-header');
+if(!chk||!body)return;
+header.onclick=function(e){
+if(e.target===chk||e.target.tagName==='INPUT')return;
+chk.click();
+};
+chk.onchange=function(){
+if(chk.checked){body.classList.add('m-open')}else{body.classList.remove('m-open')}
+};
+});
+
+const ppfPartChk=q('#m-ppfPartChk');
+const ppfPartContent=q('#m-ppfPartContent');
+if(ppfPartChk&&ppfPartContent){
+ppfPartChk.onchange=function(){
+if(ppfPartChk.checked){ppfPartContent.classList.add('m-open')}else{ppfPartContent.classList.remove('m-open')}
+};
+}
+
+const pvcPartChk=q('#m-pvcPartChk');
+const pvcPartContent=q('#m-pvcPartContent');
+if(pvcPartChk&&pvcPartContent){
+pvcPartChk.onchange=function(){
+if(pvcPartChk.checked){pvcPartContent.classList.add('m-open')}else{pvcPartContent.classList.remove('m-open')}
+};
+}
+
+['pkg','arm','wrap','det','gl','misc'].forEach(prefix=>{
+const chk=q(`#m-${prefix}CostsChk`);
+const content=q(`#m-${prefix}CostsContent`);
+const btn=q(`#m-btnAdd${prefix.charAt(0).toUpperCase()+prefix.slice(1)}Cost`);
+if(chk&&content){
+chk.onchange=function(){
+if(chk.checked){
+content.classList.add('m-open');
+if(btn)btn.style.display='block';
+}else{
+content.classList.remove('m-open');
+if(btn)btn.style.display='none';
+}
+};
+}
+});
+}
+
+function collectAll(){
+const sums={pkg:{mat:0,mot:0,names:[]},arm:{mat:0,mot:0,names:[]},wrap:{mat:0,mot:0,details:[]},det:{mat:0,mot:0,names:[]},gl:{mat:0,mot:0,names:[]},ms:{mat:0,mot:0,names:[]}};
+
+const pkgWrapMat=parseFloat(q('#m-pkgWrapMat')?.value)||0;
+const pkgWrapMot=parseFloat(q('#m-pkgWrapMot')?.value)||0;
+const pkgPrepMat=parseFloat(q('#m-pkgPrepMat')?.value)||0;
+const pkgPrepMot=parseFloat(q('#m-pkgPrepMot')?.value)||0;
+const pkgArmMat=parseFloat(q('#m-pkgArmMat')?.value)||0;
+const pkgArmMot=parseFloat(q('#m-pkgArmMot')?.value)||0;
+if(pkgWrapMat>0||pkgWrapMot>0||pkgPrepMat>0||pkgPrepMot>0||pkgArmMat>0||pkgArmMot>0){
+sums.pkg.mat=pkgWrapMat+pkgPrepMat+pkgArmMat;
+sums.pkg.mot=pkgWrapMot+pkgPrepMot+pkgArmMot;
+sums.pkg.names.push('Полная защита');
+}
+
+if(q('#m-pkgCostsChk')?.checked){
+qa('#m-pkgCostsContent .pkg-cost-amt').forEach(inp=>{
+const amt=parseFloat(inp.value)||0;
+if(amt>0)sums.pkg.mat+=amt;
+});
+}
+
+qa('.arm-chk').forEach(c=>{
+if(c.checked){
+const item=c.closest('.m-service-item'),n=item.querySelector('.m-service-header label')?.textContent?.trim();
+let mat=parseFloat(item.querySelector('.arm-mat')?.value)||0;
+let mot=parseFloat(item.querySelector('.arm-mot')?.value)||0;
+if(item.querySelector('.arm-complex')?.checked){mat*=1.1;mot*=1.1}
+if(n&&(mat>0||mot>0)){sums.arm.mat+=mat;sums.arm.mot+=mot;sums.arm.names.push(n)}
+}
+});
+
+qa('#m-armDyn .m-service-item').forEach(item=>{
+const c=item.querySelector('input[type=checkbox]');
+if(c?.checked){
+const n=item.querySelector('input[type=text]')?.value?.trim()||'Название услуги';
+let mat=parseFloat(item.querySelector('.arm-mat')?.value)||0;
+let mot=parseFloat(item.querySelector('.arm-mot')?.value)||0;
+if(item.querySelector('.arm-complex')?.checked){mat*=1.1;mot*=1.1}
+if(mat>0||mot>0){sums.arm.mat+=mat;sums.arm.mot+=mot;sums.arm.names.push(n)}
+}
+});
+
+if(q('#m-armCostsChk')?.checked){
+qa('#m-armCostsContent .arm-cost-amt').forEach(inp=>{
+const amt=parseFloat(inp.value)||0;
+if(amt>0)sums.arm.mat+=amt;
+});
+}
+
+if(q('#m-ppfClearChk')?.checked){
+const pr=parseFloat(q('#m-ppfClearPrice')?.value)||0;
+let m=parseFloat(q('#m-ppfClearM')?.value)||0;
+let mot=parseFloat(q('#m-ppfClearMot')?.value)||0;
+if(q('#m-ppfClearComplex')?.checked){m*=1.1;mot*=1.1}
+const mat=r100(m*pr);
+sums.wrap.mat+=mat;sums.wrap.mot+=mot;
+sums.wrap.details.push(['PPF прозрачный вкруг',m,pr,mat,mot,0]);
+}
+
+if(q('#m-ppfColorChk')?.checked){
+const pr=parseFloat(q('#m-ppfColorPrice')?.value)||0;
+let m=parseFloat(q('#m-ppfColorM')?.value)||0;
+let mot=parseFloat(q('#m-ppfColorMot')?.value)||0;
+if(q('#m-ppfColorComplex')?.checked){m*=1.1;mot*=1.1}
+const mat=r100(m*pr);
+sums.wrap.mat+=mat;sums.wrap.mot+=mot;
+sums.wrap.details.push(['PPF цветной вкруг',m,pr,mat,mot,0]);
+}
+
+if(q('#m-ppfMatChk')?.checked){
+const pr=parseFloat(q('#m-ppfMatPrice')?.value)||0;
+let m=parseFloat(q('#m-ppfMatM')?.value)||0;
+let mot=parseFloat(q('#m-ppfMatMot')?.value)||0;
+if(q('#m-ppfMatComplex')?.checked){m*=1.1;mot*=1.1}
+const mat=r100(m*pr);
+sums.wrap.mat+=mat;sums.wrap.mot+=mot;
+sums.wrap.details.push(['PPF матовый вкруг',m,pr,mat,mot,0]);
+}
+
+qa('.ppf-part-chk').forEach(c=>{
+if(c.checked){
+const ppfPartMainChk=q('#m-ppfPartChk');
+if(!ppfPartMainChk||!ppfPartMainChk.checked)return;
+const item=c.closest('.m-service-item'),n=item.querySelector('.m-service-header label')?.textContent?.trim();
+let m=parseFloat(item.querySelector('.ppf-part-m')?.value)||0;
+const pr=parseFloat(item.querySelector('.ppf-part-price')?.value)||0;
+let mot=parseFloat(item.querySelector('.ppf-part-mot')?.value)||0;
+if(item.querySelector('.ppf-part-complex')?.checked){m*=1.1;mot*=1.1}
+if(m>0||pr>0||mot>0){
+const mat=r100(m*pr);
+const itemMarkup=parseFloat(item.querySelector('.ppf-part-markup')?.value)||0;
+sums.wrap.mat+=mat;sums.wrap.mot+=mot;
+sums.wrap.details.push([`PPF частично - ${n}`,m,pr,mat,mot,itemMarkup]);
+}
+}
+});
+
+if(q('#m-pvcFullChk')?.checked){
+const pr=parseFloat(q('#m-pvcFullPrice')?.value)||0;
+let m=parseFloat(q('#m-pvcFullM')?.value)||0;
+let mot=parseFloat(q('#m-pvcFullMot')?.value)||0;
+if(q('#m-pvcFullComplex')?.checked){m*=1.1;mot*=1.1}
+const mat=r100(m*pr);
+sums.wrap.mat+=mat;sums.wrap.mot+=mot;
+sums.wrap.details.push(['ПВХ полная оклейка',m,pr,mat,mot,0]);
+}
+
+qa('.pvc-part-chk').forEach(c=>{
+if(c.checked){
+const pvcPartMainChk=q('#m-pvcPartChk');
+if(!pvcPartMainChk||!pvcPartMainChk.checked)return;
+const item=c.closest('.m-service-item'),n=item.querySelector('.m-service-header label')?.textContent?.trim();
+let m=parseFloat(item.querySelector('.pvc-part-m')?.value)||0;
+const pr=parseFloat(item.querySelector('.pvc-part-price')?.value)||0;
+let mot=parseFloat(item.querySelector('.pvc-part-mot')?.value)||0;
+if(item.querySelector('.pvc-part-complex')?.checked){m*=1.1;mot*=1.1}
+if(m>0||pr>0||mot>0){
+const mat=r100(m*pr);
+const itemMarkup=parseFloat(item.querySelector('.pvc-part-markup')?.value)||0;
+sums.wrap.mat+=mat;sums.wrap.mot+=mot;
+sums.wrap.details.push([`ПВХ частично - ${n}`,m,pr,mat,mot,itemMarkup]);
+}
+}
+});
+
+qa('#m-wrapDyn .m-service-item').forEach(item=>{
+const c=item.querySelector('input[type=checkbox]');
+if(c?.checked){
+const n=item.querySelector('input[type=text]')?.value?.trim()||'Название услуги';
+let m=parseFloat(item.querySelectorAll('input[type=number]')[0]?.value)||0;
+const pr=parseFloat(item.querySelectorAll('input[type=number]')[1]?.value)||0;
+let mot=parseFloat(item.querySelectorAll('input[type=number]')[2]?.value)||0;
+if(item.querySelector('.wrap-complex')?.checked){m*=1.1;mot*=1.1}
+if(m>0||pr>0||mot>0){
+const mat=r100(m*pr);
+sums.wrap.mat+=mat;sums.wrap.mot+=mot;
+sums.wrap.details.push([n,m,pr,mat,mot,0]);
+}
+}
+});
+
+if(q('#m-wrapCostsChk')?.checked){
+qa('#m-wrapCostsContent .wrap-cost-amt').forEach(inp=>{
+const amt=parseFloat(inp.value)||0;
+if(amt>0)sums.wrap.mat+=amt;
+});
+}
+
+['det','gl','misc'].forEach(tp=>{
+const key=tp==='misc'?'ms':tp;
+qa(`.${tp}-chk`).forEach(c=>{
+if(c.checked){
+const item=c.closest('.m-service-item'),n=item.querySelector('.m-service-header label')?.textContent?.trim();
+let mat=parseFloat(item.querySelector(`.${tp}-mat`)?.value)||0;
+let mot=parseFloat(item.querySelector(`.${tp}-mot`)?.value)||0;
+if(item.querySelector(`.${tp}-complex`)?.checked){mat*=1.1;mot*=1.1}
+if(n&&(mat>0||mot>0)){sums[key].mat+=mat;sums[key].mot+=mot;sums[key].names.push(n)}
+}
+});
+
+qa(`#m-${tp}Dyn .m-service-item`).forEach(item=>{
+const c=item.querySelector('input[type=checkbox]');
+if(c?.checked){
+const n=item.querySelector('input[type=text]')?.value?.trim()||'Название услуги';
+let mat=parseFloat(item.querySelector(`.${tp}-mat`)?.value)||0;
+let mot=parseFloat(item.querySelector(`.${tp}-mot`)?.value)||0;
+if(item.querySelector(`.${tp}-complex`)?.checked){mat*=1.1;mot*=1.1}
+if(mat>0||mot>0){sums[key].mat+=mat;sums[key].mot+=mot;sums[key].names.push(n)}
+}
+});
+
+if(q(`#m-${tp}CostsChk`)?.checked){
+qa(`#m-${tp}CostsContent .${tp}-cost-amt`).forEach(inp=>{
+const amt=parseFloat(inp.value)||0;
+if(amt>0)sums[key].mat+=amt;
+});
+}
+});
+
+return sums;
+}
+
+function taxCoef(){
+const m=q('input[name=m-payMode]:checked')?.value;
+return m==='card'?0.08:m==='ip'?0.08:m==='ooo'?0.20:0;
+}
+
+function markups(){
+return{
+pkg:parseFloat(q('#m-pkgMarkup')?.value)||0,
+arm:parseFloat(q('#m-armMarkup')?.value)||0,
+wrap:parseFloat(q('#m-wrapMarkup')?.value)||0,
+det:parseFloat(q('#m-detMarkup')?.value)||0,
+gl:parseFloat(q('#m-glMarkup')?.value)||0,
+ms:parseFloat(q('#m-miscMarkup')?.value)||0
+};
+}
+
+function renderKP(s,mu){
+const tb=q('#m-kpTable tbody');
+if(!tb)return;
+tb.innerHTML='';
+const taxK=taxCoef();
+let tot=0;
+
+const rows=[
+{t:'Полная защита',det:'Полная защита глянцевых кузовных элементов автомобиля с разбором съемных элементов и подготовкой кузова',sum:s.pkg,mu:mu.pkg},
+{t:'Арматурные',det:'Демонтаж и монтаж съемных элементов кузова',sum:s.arm,mu:mu.arm},
+{t:'Детейлинг',det:'Комплексная чистка и подготовка кузова и салона автомобиля',sum:s.det,mu:mu.det},
+{t:'Стёкла',det:'Тонирование и защита стекол автомобиля',sum:s.gl,mu:mu.gl},
+{t:'Прочие',det:'Дополнительные работы по кузову автомобиля',sum:s.ms,mu:mu.ms}
+];
+
+rows.forEach(r=>{
+const base=r.sum.mat+r.sum.mot;
+if(base<=0)return;
+const markupAmount=r100(base*(r.mu||0)/100);
+const markupWithDiscount=r100(markupAmount*(1-disc/100));
+let pr=base+markupWithDiscount;
+pr=r100(pr*(1+taxK));
+tot+=pr;
+const tr=document.createElement('tr');
+tr.innerHTML=`<td style="text-align:left">${r.t}</td><td style="text-align:left">${r.det||'—'}</td><td>${fmt(pr)}</td>`;
+tb.appendChild(tr);
+});
+
+if(s.wrap.details&&s.wrap.details.length>0){
+s.wrap.details.forEach(detail=>{
+const[name,meters,price,mat,mot,itemMarkup]=detail;
+const base=mat+mot;
+if(base<=0)return;
+const markupToUse=(itemMarkup&&itemMarkup>0)?itemMarkup:mu.wrap;
+const markupAmount=r100(base*(markupToUse||0)/100);
+const markupWithDiscount=r100(markupAmount*(1-disc/100));
+let pr=base+markupWithDiscount;
+pr=r100(pr*(1+taxK));
+tot+=pr;
+const tr=document.createElement('tr');
+const displayName=name.includes('PPF')||name.includes('ПВХ')?'Оклейка':'Оклейка';
+const displayDesc=name.includes('вкруг')?'Полная защита глянцевых кузовных элементов автомобиля':name;
+tr.innerHTML=`<td style="text-align:left">${displayName}</td><td style="text-align:left">${displayDesc}</td><td>${fmt(pr)}</td>`;
+tb.appendChild(tr);
+});
+}
+
+q('#m-kpTotal').textContent=fmt(tot);
+}
+
+function renderCost(s){
+const tb=q('#m-costTable tbody');
+if(!tb)return;
+tb.innerHTML='';
+
+const rows=[
+{t:'Полная защита',sum:s.pkg},
+{t:'Арматурные',sum:s.arm},
+{t:'Детейлинг',sum:s.det},
+{t:'Стёкла',sum:s.gl},
+{t:'Прочие',sum:s.ms}
+];
+
+let totM=0,totO=0;
+rows.forEach(r=>{
+const base=r.sum.mat+r.sum.mot;
+if(base<=0)return;
+totM+=r.sum.mat;
+totO+=r.sum.mot;
+const tr=document.createElement('tr');
+tr.innerHTML=`<td style="text-align:left">${r.t}</td><td>${fmt(r.sum.mat)}</td><td>${fmt(r.sum.mot)}</td>`;
+tb.appendChild(tr);
+});
+
+if(s.wrap.details&&s.wrap.details.length>0){
+s.wrap.details.forEach(detail=>{
+const[name,meters,price,mat,mot,itemMarkup]=detail;
+if(mat<=0&&mot<=0)return;
+totM+=mat;
+totO+=mot;
+const tr=document.createElement('tr');
+tr.innerHTML=`<td style="text-align:left">${name}</td><td>${fmt(mat)}</td><td>${fmt(mot)}</td>`;
+tb.appendChild(tr);
+});
+}
+
+q('#m-cMat').textContent=fmt(totM);
+q('#m-cMot').textContent=fmt(totO);
+q('#m-cTotal').textContent=fmt(totM+totO);
+}
+
+function renderWork(s){
+const tb=q('#m-workTable tbody');
+if(!tb)return;
+tb.innerHTML='';
+
+const rows=[
+{t:'Полная защита',sum:s.pkg},
+{t:'Арматурные',sum:s.arm},
+{t:'Детейлинг',sum:s.det},
+{t:'Стёкла',sum:s.gl},
+{t:'Прочие',sum:s.ms}
+];
+
+rows.forEach(r=>{
+const base=r.sum.mat+r.sum.mot;
+if(base<=0)return;
+const tr1=document.createElement('tr');
+tr1.innerHTML=`<td style="text-align:left" rowspan="2">${r.t}</td><td>Исполнитель 1</td><td></td><td></td><td></td>`;
+tb.appendChild(tr1);
+const tr2=document.createElement('tr');
+tr2.innerHTML=`<td>Исполнитель 2</td><td></td><td></td><td></td>`;
+tb.appendChild(tr2);
+});
+
+if(s.wrap.details&&s.wrap.details.length>0){
+s.wrap.details.forEach(detail=>{
+const[name,meters,price,mat,mot,itemMarkup]=detail;
+if(mat<=0&&mot<=0)return;
+const tr1=document.createElement('tr');
+tr1.innerHTML=`<td style="text-align:left" rowspan="2">${name}</td><td>Исполнитель 1</td><td></td><td></td><td></td>`;
+tb.appendChild(tr1);
+const tr2=document.createElement('tr');
+tr2.innerHTML=`<td>Исполнитель 2</td><td></td><td></td><td></td>`;
+tb.appendChild(tr2);
+});
+}
+}
+
+function renderBadges(s,mu){
+q('#m-sumPkgMat').value=s.pkg.mat.toFixed(2);q('#m-sumPkgMot').value=s.pkg.mot.toFixed(2);q('#m-sebPkg').value=(s.pkg.mat+s.pkg.mot).toFixed(2);
+q('#m-sumArmMat').value=s.arm.mat.toFixed(2);q('#m-sumArmMot').value=s.arm.mot.toFixed(2);q('#m-sebArm').value=(s.arm.mat+s.arm.mot).toFixed(2);
+q('#m-sumWrapMat').value=s.wrap.mat.toFixed(2);q('#m-sumWrapMot').value=s.wrap.mot.toFixed(2);q('#m-sebWrap').value=(s.wrap.mat+s.wrap.mot).toFixed(2);
+q('#m-sumDetMat').value=s.det.mat.toFixed(2);q('#m-sumDetMot').value=s.det.mot.toFixed(2);q('#m-sebDet').value=(s.det.mat+s.det.mot).toFixed(2);
+q('#m-sumGlMat').value=s.gl.mat.toFixed(2);q('#m-sumGlMot').value=s.gl.mot.toFixed(2);q('#m-sebGl').value=(s.gl.mat+s.gl.mot).toFixed(2);
+q('#m-sumMiscMat').value=s.ms.mat.toFixed(2);q('#m-sumMiscMot').value=s.ms.mot.toFixed(2);q('#m-sebMisc').value=(s.ms.mat+s.ms.mot).toFixed(2);
+
+const pkgTotal=s.pkg.mat+s.pkg.mot;
+const armTotal=s.arm.mat+s.arm.mot;
+const wrapTotal=s.wrap.mat+s.wrap.mot;
+const detTotal=s.det.mat+s.det.mot;
+const glTotal=s.gl.mat+s.gl.mot;
+const msTotal=s.ms.mat+s.ms.mot;
+
+const pkgCard=q('#m-sumPkgCard');
+const armCard=q('#m-sumArmCard');
+const wrapCard=q('#m-sumWrapCard');
+const detCard=q('#m-sumDetCard');
+const glCard=q('#m-sumGlCard');
+const miscCard=q('#m-sumMiscCard');
+
+if(pkgCard)pkgCard.style.display=pkgTotal>0?'block':'none';
+if(armCard)armCard.style.display=armTotal>0?'block':'none';
+if(wrapCard)wrapCard.style.display=wrapTotal>0?'block':'none';
+if(detCard)detCard.style.display=detTotal>0?'block':'none';
+if(glCard)glCard.style.display=glTotal>0?'block':'none';
+if(miscCard)miscCard.style.display=msTotal>0?'block':'none';
+
+const baseAll=pkgTotal+armTotal+wrapTotal+detTotal+glTotal+msTotal;
+const pkgMarkup=r100(pkgTotal*(mu.pkg||0)/100);
+const armMarkup=r100(armTotal*(mu.arm||0)/100);
+const detMarkup=r100(detTotal*(mu.det||0)/100);
+const glMarkup=r100(glTotal*(mu.gl||0)/100);
+const msMarkup=r100(msTotal*(mu.ms||0)/100);
+
+let wrapMarkup=0;
+if(s.wrap.details&&s.wrap.details.length>0){
+s.wrap.details.forEach(detail=>{
+const[name,meters,price,mat,mot,itemMarkup]=detail;
+const base=mat+mot;
+const markupToUse=(itemMarkup&&itemMarkup>0)?itemMarkup:mu.wrap;
+wrapMarkup+=r100(base*(markupToUse||0)/100);
+});
+}else{
+wrapMarkup=r100(wrapTotal*(mu.wrap||0)/100);
+}
+
+const totalMarkup=pkgMarkup+armMarkup+wrapMarkup+detMarkup+glMarkup+msMarkup;
+const markupWithDiscount=r100(totalMarkup*(1-disc/100));
+const afterMarkup=baseAll+markupWithDiscount;
+const taxK=taxCoef();
+const tax=r100(afterMarkup*taxK);
+const fin=afterMarkup+tax;
+
+q('#m-grandMat').textContent=fmt(s.pkg.mat+s.arm.mat+s.wrap.mat+s.det.mat+s.gl.mat+s.ms.mat);
+q('#m-grandMot').textContent=fmt(s.pkg.mot+s.arm.mot+s.wrap.mot+s.det.mot+s.gl.mot+s.ms.mot);
+q('#m-grandBase').textContent=fmt(baseAll);
+q('#m-grandMarkup').textContent=fmt(markupWithDiscount);
+q('#m-grandTax').textContent=fmt(tax);
+q('#m-finalTotal').textContent=fmt(fin);
+
+if(chart){
+chart.data.datasets[0].data=[
+s.pkg.mat+s.arm.mat+s.wrap.mat+s.det.mat+s.gl.mat+s.ms.mat,
+s.pkg.mot+s.arm.mot+s.wrap.mot+s.det.mot+s.gl.mot+s.ms.mot,
+markupWithDiscount,
+tax
+];
+chart.update('none');
+}
+}
+
+function renderAll(){
+const s=collectAll();
+const mu=markups();
+renderBadges(s,mu);
+renderKP(s,mu);
+renderCost(s);
+renderWork(s);
+highlightMarkupFields(s,mu);
+}
+
+function highlightMarkupFields(s,mu){
+const checks=[
+{sum:s.pkg.mat+s.pkg.mot,markup:mu.pkg,field:'#m-pkgMarkup'},
+{sum:s.arm.mat+s.arm.mot,markup:mu.arm,field:'#m-armMarkup'},
+{sum:s.wrap.mat+s.wrap.mot,markup:mu.wrap,field:'#m-wrapMarkup'},
+{sum:s.det.mat+s.det.mot,markup:mu.det,field:'#m-detMarkup'},
+{sum:s.gl.mat+s.gl.mot,markup:mu.gl,field:'#m-glMarkup'},
+{sum:s.ms.mat+s.ms.mot,markup:mu.ms,field:'#m-miscMarkup'}
+];
+checks.forEach(c=>{
+const field=q(c.field);
+if(!field)return;
+if(c.sum>0&&(!c.markup||c.markup===0)){
+field.classList.add('m-markup-warning');
+}else{
+field.classList.remove('m-markup-warning');
+}
+});
+}
+
+function initTheme(){
+const sv=localStorage.getItem('m-theme'),i=q('#m-theme-icon'),w=q('.m-calc-wrapper');
+if(sv==='dark'){w.setAttribute('data-theme','dark');i.textContent='Светлая'}
+
+qa('.m-toggle-btn').forEach(b=>{
+b.addEventListener('click',()=>{
+const r=b.querySelector('input[type=radio]');
+if(r){r.checked=true;qa('.m-toggle-btn').forEach(x=>x.classList.remove('m-active'));b.classList.add('m-active');renderAll()}
+});
+});
+
+q('.m-toggle-btn')?.classList.add('m-active');
+
+qa('.m-card h2.m-collapsible').forEach(h=>{
+h.addEventListener('click',()=>{
+h.classList.toggle('m-collapsed');
+h.nextElementSibling.classList.toggle('m-collapsed');
+});
+});
+}
+
+function initDiscounts(){
+qa('.m-discount-btn').forEach(b=>{
+b.addEventListener('click',()=>{
+disc=parseInt(b.dataset.discount)||0;
+qa('.m-discount-btn').forEach(x=>x.classList.toggle('m-active',parseInt(x.dataset.discount)===disc));
+q('#m-customDiscount').value='';
+renderAll();
+});
+});
+
+q('#m-customDiscount')?.addEventListener('input',e=>{
+const v=Math.max(0,Math.min(100,parseFloat(e.target.value)||0));
+disc=v;
+qa('.m-discount-btn').forEach(b=>b.classList.remove('m-active'));
+renderAll();
+});
+}
+
+function initChart(){
+const ctx=q('#m-pieChart')?.getContext('2d');
+if(!ctx||!window.Chart)return;
+chart=new Chart(ctx,{
+type:'doughnut',
+data:{
+labels:['Материалы','Мотивация','Наценка','Налог'],
+datasets:[{data:[0,0,0,0],backgroundColor:['#3b82f6','#10b981','#f59e0b','#ef4444'],borderWidth:0}]
+},
+options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11},padding:10}}}}
+});
+}
+
+function exportPDF(blockId,filename){
+const{jsPDF}=window.jspdf||{};
+if(!jsPDF||!window.html2canvas){alert('Библиотеки PDF загружаются...');return}
+
+const holder=q('#m-pdfTemplates');
+const block=q(blockId);
+const orig=holder.style.display;
+holder.style.display='block';
+holder.style.position='absolute';
+holder.style.left='-9999px';
+setTimeout(()=>{
+html2canvas(block,{scale:2,useCORS:true,backgroundColor:'#fff'}).then(canvas=>{
+const pdf=new jsPDF({orientation:'portrait',unit:'pt',format:'a4'});
+const pw=pdf.internal.pageSize.getWidth();
+const ph=pdf.internal.pageSize.getHeight();
+const iw=canvas.width;
+const ih=canvas.height;
+const ratio=Math.min(pw/iw,ph/ih);
+const sw=iw*ratio;
+const sh=ih*ratio;
+const x=(pw-sw)/2;
+const y=20;
+pdf.addImage(canvas.toDataURL('image/png'),'PNG',x,y,sw,Math.min(sh,ph-40));
+
+// Проверяем Telegram WebView
+const isTelegram=window.TelegramWebviewProxy!==undefined||navigator.userAgent.includes('Telegram');
+
+// Для Telegram используем встроенный метод
+if(isTelegram){
+try{
+pdf.save(filename);
+}catch(e){
+alert('Откройте сайт в браузере для полноценного скачивания PDF\n\nНажмите "•••" → "Открыть в браузере"');
+}
+}
+// Используем FileSaver.js для остальных
+else if(typeof saveAs!=='undefined'){
+try{
+const pdfBlob=pdf.output('blob');
+saveAs(pdfBlob,filename);
+}catch(e){
+try{
+pdf.save(filename);
+}catch(e2){
+alert('Не удалось сохранить PDF. Попробуйте другой браузер.');
+}
+}
+}else{
+// Fallback без FileSaver
+const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
+const isMobile=/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+if(isMobile){
+try{
+pdf.save(filename);
+}catch(e){
+alert('Не удалось сохранить PDF');
+}
+}else{
+try{
+const pdfBlob=pdf.output('blob');
+const pdfUrl=URL.createObjectURL(pdfBlob);
+const link=document.createElement('a');
+link.href=pdfUrl;
+link.download=filename;
+link.style.display='none';
+document.body.appendChild(link);
+link.click();
+document.body.removeChild(link);
+setTimeout(()=>URL.revokeObjectURL(pdfUrl),100);
+}catch(e){
+pdf.save(filename);
+}
+}
+}
+}).catch(err=>{
+alert('Ошибка создания PDF: '+err.message);
+}).finally(()=>{
+holder.style.display=orig;
+});
+},200);
+}
+
+function prepKP(){
+const tb=q('#m-pdfKPTBody');
+if(!tb)return;
+tb.innerHTML='';
+qa('#m-kpTable tbody tr').forEach(tr=>{
+const t=tr.children[0].textContent.trim();
+const d=tr.children[1].textContent.trim();
+const p=tr.children[2].textContent.trim();
+const r=document.createElement('tr');
+r.innerHTML=`<td style="width:25%">${t}</td><td style="width:50%">${d||'—'}</td><td style="width:25%">${p}</td>`;
+tb.appendChild(r);
+});
+q('#m-pdfKPTotal').textContent=q('#m-kpTotal')?.textContent||'0,00';
+const br=q('#m-brandManual').classList.contains('m-invis')?q('#m-brand').value:q('#m-brandManual').value;
+const md=q('#m-modelManual').classList.contains('m-invis')?q('#m-model').value:q('#m-modelManual').value;
+const yr=q('#m-year').value||'—';
+const now=new Date();
+const dateStr=now.toLocaleDateString('ru-RU');
+const timeStr=now.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+const payMode=q('input[name=m-payMode]:checked')?.value;
+const payText=payMode==='cash'?'Наличные':payMode==='card'?'Карта':payMode==='ip'?'ИП':'ООО';
+q('#m-pdfKPMeta').innerHTML=`Автомобиль: ${br||'—'} ${md||'—'} ${yr}<br>Дата: ${dateStr} ${timeStr}<br><b><i>Условия оплаты: ${payText}</i></b>`;
+}
+
+function prepCost(){
+const tb=q('#m-pdfCostTBody');
+if(!tb)return;
+tb.innerHTML='';
+qa('#m-costTable tbody tr').forEach(tr=>{
+const c=tr.children;
+const r=document.createElement('tr');
+r.innerHTML=`<td>${c[0].textContent.trim()}</td><td>${c[1].textContent.trim()}</td><td>${c[2].textContent.trim()}</td>`;
+tb.appendChild(r);
+});
+q('#m-pdfCM').textContent=q('#m-cMat')?.textContent||'0,00';
+q('#m-pdfCO').textContent=q('#m-cMot')?.textContent||'0,00';
+const br=q('#m-brandManual').classList.contains('m-invis')?q('#m-brand').value:q('#m-brandManual').value;
+const md=q('#m-modelManual').classList.contains('m-invis')?q('#m-model').value:q('#m-modelManual').value;
+const yr=q('#m-year').value||'—';
+q('#m-pdfCostMeta').textContent=`Автомобиль: ${br||'—'} ${md||'—'} ${yr}`;
+}
+
+function prepWork(){
+const tb=q('#m-pdfWorkTBody');
+if(!tb)return;
+tb.innerHTML='';
+qa('#m-workTable tbody tr').forEach((tr,idx)=>{
+if(idx%2===0){
+const serviceName=tr.children[0]?.textContent?.trim()||'';
+const r1=document.createElement('tr');
+r1.innerHTML=`<td rowspan="2">${serviceName}</td><td>Исполнитель 1</td><td></td><td></td><td></td>`;
+tb.appendChild(r1);
+const r2=document.createElement('tr');
+r2.innerHTML=`<td>Исполнитель 2</td><td></td><td></td><td></td>`;
+tb.appendChild(r2);
+}
+});
+const br=q('#m-brandManual').classList.contains('m-invis')?q('#m-brand').value:q('#m-brandManual').value;
+const md=q('#m-modelManual').classList.contains('m-invis')?q('#m-model').value:q('#m-modelManual').value;
+const yr=q('#m-year').value||'—';
+q('#m-pdfWorkMeta').textContent=`Автомобиль: ${br||'—'} ${md||'—'} ${yr}`;
+}
+
+function setDefaultMarkups(){
+['#m-pkgMarkup','#m-armMarkup','#m-wrapMarkup','#m-detMarkup','#m-glMarkup','#m-miscMarkup'].forEach(id=>{
+const field=q(id);
+if(field)field.value=40;
+});
+}
+
+function formatNumberInput(input){
+const val=parseFloat(input.value);
+if(!isNaN(val)&&val>=0){
+input.value=val.toFixed(2);
+}
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+// Показываем предупреждение для Telegram
+const isTelegram=window.TelegramWebviewProxy!==undefined||navigator.userAgent.includes('Telegram');
+if(isTelegram){
+const warning=q('#m-telegramWarning');
+if(warning)warning.style.display='block';
+}
+
+initTheme();
+initDiscounts();
+initChart();
+fillBrands();
+
+renderServiceList('#m-armContent',armServices,'arm');
+renderWrapContent();
+renderPartialLists();
+renderServiceList('#m-detContent',detailServices,'det');
+renderServiceList('#m-glContent',glassServices,'gl');
+renderServiceList('#m-miscContent',miscServices,'misc');
+renderSummaryCards();
+initServiceToggles();
+setDefaultMarkups();
+
+q('#m-brand')?.addEventListener('change',onBrandChange);
+q('#m-model')?.addEventListener('change',onModelChange);
+
+q('#m-btnAddArm')?.addEventListener('click',()=>{addDynRow('#m-armDyn','arm');initServiceToggles()});
+q('#m-btnAddWrap')?.addEventListener('click',()=>{addDynRow('#m-wrapDyn','wrap');initServiceToggles()});
+q('#m-btnAddDet')?.addEventListener('click',()=>{addDynRow('#m-detDyn','det');initServiceToggles()});
+q('#m-btnAddGl')?.addEventListener('click',()=>{addDynRow('#m-glDyn','gl');initServiceToggles()});
+q('#m-btnAddMisc')?.addEventListener('click',()=>{addDynRow('#m-miscDyn','misc');initServiceToggles()});
+
+q('#m-btnAddPkgCost')?.addEventListener('click',()=>{addCostRow('#m-pkgCostsContent','pkg')});
+q('#m-btnAddArmCost')?.addEventListener('click',()=>{addCostRow('#m-armCostsContent','arm')});
+q('#m-btnAddWrapCost')?.addEventListener('click',()=>{addCostRow('#m-wrapCostsContent','wrap')});
+q('#m-btnAddDetCost')?.addEventListener('click',()=>{addCostRow('#m-detCostsContent','det')});
+q('#m-btnAddGlCost')?.addEventListener('click',()=>{addCostRow('#m-glCostsContent','gl')});
+q('#m-btnAddMiscCost')?.addEventListener('click',()=>{addCostRow('#m-miscCostsContent','misc')});
+
+qa('input[name=m-payMode]').forEach(r=>r.addEventListener('change',renderAll));
+q('#m-btnRecalc')?.addEventListener('click',renderAll);
+q('#m-btnReset')?.addEventListener('click',()=>{
+if(confirm('Вы уверены, что хотите сбросить все данные?'))location.reload();
+});
+
+document.addEventListener('input',e=>{
+if(e.target.matches('input[type="number"]')){
+let val=parseFloat(e.target.value);
+if(!isNaN(val)&&val<0){
+e.target.value='';
+}
+}
+if(e.target.matches('input,select'))renderAll();
+});
+
+document.addEventListener('blur',e=>{
+if(e.target.matches('input[type="number"]')&&e.target.value!==''){
+formatNumberInput(e.target);
+renderAll();
+}
+},true);
+
+qa('.m-chip').forEach(ch=>ch.addEventListener('click',()=>{
+const sel=ch.getAttribute('data-markup-target');
+const tgt=q(sel);
+if(tgt){tgt.value=ch.textContent.trim();renderAll()}
+}));
+
+q('#m-btnExportKP')?.addEventListener('click',()=>{
+prepKP();
+setTimeout(()=>exportPDF('#m-pdfKP','Коммерческое_предложение.pdf'),100);
+});
+
+q('#m-btnExportCost')?.addEventListener('click',()=>{
+prepCost();
+setTimeout(()=>exportPDF('#m-pdfCost','Себестоимость.pdf'),100);
+});
+
+q('#m-btnExportWork')?.addEventListener('click',()=>{
+prepWork();
+setTimeout(()=>exportPDF('#m-pdfWork','Перечень_работ.pdf'),100);
+});
+
+renderAll();
+});
+})();
+</script>
+</body>
+</html>
