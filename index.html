@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Калькулятор оклейки</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -182,6 +183,24 @@ body::before {
 .theme-toggle span {
   position: relative;
   z-index: 1;
+}
+
+#user-info {
+  text-align: right;
+  line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+  #user-info {
+    font-size: 0.75rem;
+    max-width: 120px;
+  }
+  
+  #btn-logout {
+    font-size: 0.75rem;
+    padding: 6px 10px !important;
+    min-height: auto !important;
+  }
 }
 
 .main-container {
@@ -1274,14 +1293,224 @@ tfoot th:first-child {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--border-hover);
 }
+
+/* Auth Overlay */
+#auth-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+#auth-overlay.hidden {
+  display: none;
+}
+
+#auth-box {
+  background: var(--card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 450px;
+  width: 100%;
+  box-shadow: var(--shadow-xl);
+  animation: authSlideIn 0.4s ease-out;
+}
+
+@keyframes authSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+#auth-box h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+#auth-box p {
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+#auth-trial-info {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: var(--success);
+  font-weight: 600;
+  display: none;
+}
+
+#auth-denied {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: var(--danger);
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+#auth-form input {
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-secondary);
+  color: var(--text);
+  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.3s;
+}
+
+#auth-form input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+#auth-error {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 16px;
+  color: var(--danger);
+  font-size: 0.9rem;
+  display: none;
+}
+
+#auth-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+#auth-buttons button {
+  flex: 1;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: 'Inter', sans-serif;
+}
+
+#btn-signin {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #fff;
+  box-shadow: var(--shadow-md), var(--glow-primary);
+}
+
+#btn-signin:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg), 0 0 30px rgba(59, 130, 246, 0.4);
+}
+
+#btn-signin:active {
+  transform: translateY(0);
+}
+
+#btn-signup {
+  background: var(--bg-secondary);
+  color: var(--text);
+  border: 2px solid var(--border);
+}
+
+#btn-signup:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+}
+
+#btn-signup:active {
+  transform: translateY(0);
+}
+
+#auth-ref-link {
+  margin-top: 20px;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 12px;
+  text-align: center;
+}
+
+#auth-ref-link a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  word-break: break-all;
+}
+
+#auth-ref-link a:hover {
+  text-decoration: underline;
+}
 </style>
 </head>
 <body>
+<div id="auth-overlay">
+  <div id="auth-box">
+    <h2>🔐 Вход в калькулятор</h2>
+    <p>Войдите или зарегистрируйтесь по почте, чтобы пользоваться калькулятором.</p>
+    <div id="auth-trial-info"></div>
+    <div id="auth-denied" style="display:none">
+      ⚠️ Ваш пробный период (72 часа) закончился.<br>
+      Оплатите доступ на лендинге, после этого мы отметим ваш аккаунт как оплаченный.
+    </div>
+    <form id="auth-form" onsubmit="return false;">
+      <input type="email" id="auth-email" placeholder="Почта" required>
+      <input type="password" id="auth-password" placeholder="Пароль" required>
+      <input type="text" id="auth-studio" placeholder="Название студии (необязательно)">
+      <div id="auth-error"></div>
+      <div id="auth-buttons">
+        <button type="button" id="btn-signin">Войти</button>
+        <button type="button" id="btn-signup">Зарегистрироваться</button>
+      </div>
+    </form>
+    <div id="auth-ref-link" style="display:none;"></div>
+  </div>
+</div>
+
 <div id="app">
 <div class="top-bar">
   <h1>Калькулятор оклейки</h1>
-  <div class="theme-toggle" onclick="toggleTheme()">
-    <span id="themeIcon">☀️</span>
+  <div style="display:flex;align-items:center;gap:12px">
+    <div id="user-info" style="display:none;font-size:0.85rem;color:var(--text-muted)"></div>
+    <button id="btn-logout" class="theme-toggle" style="display:none;padding:8px 12px">🚪 Выход</button>
+    <div class="theme-toggle" onclick="toggleTheme()">
+      <span id="themeIcon">☀️</span>
+    </div>
   </div>
 </div>
 
@@ -1579,6 +1808,338 @@ tfoot th:first-child {
 <script>
 (function() {
 'use strict';
+
+// ========================================
+// SUPABASE AUTH SYSTEM
+// ========================================
+
+const SUPABASE_URL = 'https://hdghijgrrnzmntistdvw.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkZ2hpamdycm56bW50aXN0ZHZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAwMzMyNzksImV4cCI6MjA3NTYwOTI3OX0.D9EDTmVrFRVp0B8_5tCJM29gbFdtadsom0Ihsf4uQ8Q';
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let currentUser = null;
+let currentProfile = null;
+
+function getUrlParams() {
+  const p = new URLSearchParams(window.location.search);
+  return {
+    mode: p.get('mode'),
+    ref: p.get('ref')
+  };
+}
+
+function formatDate(dtStr) {
+  if (!dtStr) return '';
+  const d = new Date(dtStr);
+  return d.toLocaleString('ru-RU', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
+function getHoursLeft(endsAt) {
+  if (!endsAt) return 0;
+  const end = new Date(endsAt);
+  const now = new Date();
+  const diff = end - now;
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  return hours > 0 ? hours : 0;
+}
+
+async function loadProfile(userId) {
+  const { data, error } = await sb
+    .from('profiles')
+    .select('*')
+    .eq('id', userId)
+    .single();
+  if (error) {
+    console.error('profile error', error);
+    throw error;
+  }
+  return data;
+}
+
+async function updateProfile(userId, patch) {
+  const { data, error } = await sb
+    .from('profiles')
+    .update(patch)
+    .eq('id', userId)
+    .select()
+    .single();
+  if (error) {
+    console.error('update profile error', error);
+    throw error;
+  }
+  return data;
+}
+
+function showAuthError(message) {
+  const errorBox = document.getElementById('auth-error');
+  if (errorBox) {
+    errorBox.textContent = message;
+    errorBox.style.display = 'block';
+  }
+}
+
+function hideAuthError() {
+  const errorBox = document.getElementById('auth-error');
+  if (errorBox) {
+    errorBox.style.display = 'none';
+  }
+}
+
+function displayUserInfo() {
+  if (!currentProfile) return;
+  
+  const userInfo = document.getElementById('user-info');
+  const logoutBtn = document.getElementById('btn-logout');
+  
+  if (userInfo) {
+    let statusText = '';
+    
+    if (currentProfile.is_paid) {
+      statusText = '✅ Оплачено';
+    } else if (currentProfile.trial_ends_at) {
+      const hours = getHoursLeft(currentProfile.trial_ends_at);
+      if (hours > 0) {
+        statusText = `⏱️ Триал: ${hours}ч`;
+      }
+    }
+    
+    const studioName = currentProfile.studio_name || 'Студия';
+    
+    userInfo.innerHTML = `
+      <span style="font-weight:600">${studioName}</span>
+      ${statusText ? '<br>' + statusText : ''}
+    `;
+    userInfo.style.display = 'block';
+  }
+  
+  if (logoutBtn) {
+    logoutBtn.style.display = 'block';
+  }
+}
+
+async function handleLogout() {
+  if (confirm('Вы уверены, что хотите выйти?')) {
+    await sb.auth.signOut();
+    currentUser = null;
+    currentProfile = null;
+    
+    const userInfo = document.getElementById('user-info');
+    const logoutBtn = document.getElementById('btn-logout');
+    
+    if (userInfo) userInfo.style.display = 'none';
+    if (logoutBtn) logoutBtn.style.display = 'none';
+    
+    const overlay = document.getElementById('auth-overlay');
+    if (overlay) overlay.style.display = 'flex';
+    
+    const denied = document.getElementById('auth-denied');
+    if (denied) denied.style.display = 'none';
+    
+    const form = document.getElementById('auth-form');
+    if (form) form.style.display = 'block';
+  }
+}
+
+async function afterAuth(user) {
+  const overlay = document.getElementById('auth-overlay');
+  const trialInfo = document.getElementById('auth-trial-info');
+  const denied = document.getElementById('auth-denied');
+  const refBlock = document.getElementById('auth-ref-link');
+  const authForm = document.getElementById('auth-form');
+
+  const { mode, ref } = getUrlParams();
+
+  try {
+    let profile = await loadProfile(user.id);
+
+    const studioInput = document.getElementById('auth-studio');
+    if (studioInput && studioInput.value && !profile.studio_name) {
+      profile = await updateProfile(user.id, { studio_name: studioInput.value });
+    }
+
+    const now = new Date();
+    const patch = {};
+
+    if (mode === 'trial' && !profile.trial_started_at) {
+      const ends = new Date(now.getTime() + 72 * 60 * 60 * 1000);
+      patch.trial_started_at = now.toISOString();
+      patch.trial_ends_at = ends.toISOString();
+    }
+
+    if (ref && !profile.referred_by) {
+      patch.referred_by = ref;
+    }
+
+    if (Object.keys(patch).length > 0) {
+      profile = await updateProfile(user.id, patch);
+    }
+
+    currentUser = user;
+    currentProfile = profile;
+
+    let hasAccess = false;
+    let trialText = '';
+
+    if (profile.is_paid) {
+      hasAccess = true;
+      trialText = '✅ Ваш аккаунт оплачен. Спасибо! 🙌';
+    } else if (profile.trial_ends_at) {
+      const end = new Date(profile.trial_ends_at);
+      if (end > now) {
+        hasAccess = true;
+        const hours = getHoursLeft(profile.trial_ends_at);
+        trialText = `⏱️ Пробный доступ активен. Осталось ${hours} часов до ${formatDate(profile.trial_ends_at)}`;
+      } else {
+        hasAccess = false;
+        trialText = '⚠️ Пробный период истёк.';
+      }
+    } else if (mode === 'trial') {
+      hasAccess = true;
+      trialText = '✨ Пробный доступ активирован на 72 часа!';
+    } else {
+      hasAccess = false;
+      trialText = '⚠️ Доступ пока не активирован.';
+    }
+
+    if (trialInfo) {
+      trialInfo.textContent = trialText;
+      trialInfo.style.display = 'block';
+    }
+
+    if (hasAccess) {
+      if (overlay) overlay.style.display = 'none';
+      displayUserInfo();
+    } else {
+      if (overlay) overlay.style.display = 'flex';
+      if (denied) denied.style.display = 'block';
+      if (authForm) authForm.style.display = 'none';
+    }
+
+    if (profile.referral_code) {
+      const baseUrl = window.location.origin + window.location.pathname;
+      const link = baseUrl + '?ref=' + encodeURIComponent(profile.referral_code) + '&mode=trial';
+      if (refBlock) {
+        refBlock.style.display = 'block';
+        refBlock.innerHTML = `
+          <p style="margin-bottom:8px;color:var(--text-muted);font-size:0.9rem">Ваша реферальная ссылка для студий:</p>
+          <a href="${link}" target="_blank" style="word-break:break-all">${link}</a>
+          <p style="margin-top:8px;color:var(--text-dimmed);font-size:0.85rem">Поделитесь с друзьями!</p>
+        `;
+      }
+    }
+  } catch (error) {
+    console.error('afterAuth error:', error);
+    showAuthError('Ошибка загрузки профиля: ' + error.message);
+  }
+}
+
+async function initAuth() {
+  const overlay = document.getElementById('auth-overlay');
+  const emailInput = document.getElementById('auth-email');
+  const passInput = document.getElementById('auth-password');
+  const btnSignIn = document.getElementById('btn-signin');
+  const btnSignUp = document.getElementById('btn-signup');
+  const btnLogout = document.getElementById('btn-logout');
+
+  if (overlay) overlay.style.display = 'flex';
+
+  try {
+    const { data } = await sb.auth.getSession();
+    if (data.session && data.session.user) {
+      await afterAuth(data.session.user);
+      return;
+    }
+  } catch (e) {
+    console.error('Session check error:', e);
+  }
+
+  if (btnSignIn) {
+    btnSignIn.addEventListener('click', async () => {
+      hideAuthError();
+      const email = emailInput.value.trim();
+      const password = passInput.value.trim();
+
+      if (!email || !password) {
+        showAuthError('Введите почту и пароль.');
+        return;
+      }
+
+      try {
+        const { data, error } = await sb.auth.signInWithPassword({ email, password });
+        if (error) {
+          console.error(error);
+          showAuthError(error.message || 'Ошибка входа.');
+          return;
+        }
+
+        if (data.user) {
+          await afterAuth(data.user);
+        }
+      } catch (e) {
+        showAuthError('Ошибка: ' + e.message);
+      }
+    });
+  }
+
+  if (btnSignUp) {
+    btnSignUp.addEventListener('click', async () => {
+      hideAuthError();
+      const email = emailInput.value.trim();
+      const password = passInput.value.trim();
+
+      if (!email || !password) {
+        showAuthError('Введите почту и пароль.');
+        return;
+      }
+
+      if (password.length < 6) {
+        showAuthError('Пароль должен быть не менее 6 символов.');
+        return;
+      }
+
+      try {
+        const { data, error } = await sb.auth.signUp({ email, password });
+        if (error) {
+          console.error(error);
+          showAuthError(error.message || 'Ошибка регистрации.');
+          return;
+        }
+
+        if (data.user) {
+          await afterAuth(data.user);
+        } else {
+          showAuthError('Проверьте почту и перейдите по ссылке подтверждения.');
+        }
+      } catch (e) {
+        showAuthError('Ошибка: ' + e.message);
+      }
+    });
+  }
+
+  const authForm = document.getElementById('auth-form');
+  if (authForm) {
+    authForm.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        btnSignIn.click();
+      }
+    });
+  }
+
+  if (btnLogout) {
+    btnLogout.addEventListener('click', handleLogout);
+  }
+}
+
+// ========================================
+// MAIN CALCULATOR CODE
+// ========================================
 
 const q = s => document.querySelector(s);
 const qa = s => document.querySelectorAll(s);
@@ -2784,6 +3345,9 @@ function formatNumberInput(input) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Initialize auth system first
+  initAuth();
+  
   const isTelegram = window.TelegramWebviewProxy !== undefined || navigator.userAgent.includes('Telegram');
   if (isTelegram) {
     const warning = q('#telegramWarning');
