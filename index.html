@@ -11,7 +11,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-  /* Modern Color Palette */
   --bg-primary: #0f172a;
   --bg-secondary: #1e293b;
   --bg-tertiary: #334155;
@@ -22,8 +21,6 @@
   --text-dimmed: #64748b;
   --border: rgba(148, 163, 184, 0.1);
   --border-hover: rgba(148, 163, 184, 0.2);
-  
-  /* Brand Colors */
   --primary: #3b82f6;
   --primary-dark: #2563eb;
   --primary-light: #60a5fa;
@@ -32,16 +29,12 @@
   --warning: #f59e0b;
   --warning-dark: #d97706;
   --danger: #ef4444;
-  
-  /* Effects */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.2);
   --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.3);
   --glow-primary: 0 0 20px rgba(59, 130, 246, 0.3);
   --glow-success: 0 0 20px rgba(16, 185, 129, 0.3);
-  
-  /* Glassmorphism */
   --glass: rgba(255, 255, 255, 0.05);
   --glass-border: rgba(255, 255, 255, 0.1);
 }
@@ -83,7 +76,6 @@ body {
   position: relative;
 }
 
-/* Animated Background */
 body::before {
   content: '';
   position: fixed;
@@ -105,7 +97,6 @@ body::before {
   50% { opacity: 0.8; }
 }
 
-/* Top Bar - Modern Design */
 .top-bar {
   position: fixed;
   top: 0;
@@ -193,21 +184,19 @@ body::before {
   z-index: 1;
 }
 
-/* Main Container */
 .main-container {
-  padding-top: 90px; /* Увеличил с 60px до 90px */
+  padding-top: 90px;
   min-height: 100vh;
   position: relative;
   z-index: 1;
 }
 
-/* Mobile Layout */
 @media (max-width: 767px) {
   .main-container {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    padding: 90px 16px 40px; /* Увеличил верхний padding */
+    padding: 90px 16px 40px;
   }
   
   .left-column,
@@ -216,7 +205,6 @@ body::before {
   }
 }
 
-/* Desktop Layout */
 @media (min-width: 768px) {
   .main-container {
     display: flex;
@@ -246,7 +234,6 @@ body::before {
   }
 }
 
-/* Modern Card Design */
 .card {
   background: var(--card);
   backdrop-filter: blur(20px);
@@ -370,7 +357,6 @@ body::before {
   display: none;
 }
 
-/* Right column cards */
 @media (min-width: 768px) {
   .right-column .card h2 {
     cursor: default;
@@ -386,7 +372,6 @@ body::before {
   }
 }
 
-/* Form Elements - Modern Style */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -436,10 +421,10 @@ select {
   }
   
   select {
-    padding: 14px 16px; /* Keep larger padding for select */
-    font-size: 16px; /* Keep larger font for select */
-    min-height: 54px; /* Even taller than mobile! */
-    height: 54px; /* Force height */
+    padding: 14px 16px;
+    font-size: 16px;
+    min-height: 54px;
+    height: 54px;
   }
 }
 
@@ -473,7 +458,6 @@ input:read-only {
   cursor: not-allowed;
 }
 
-/* Service Items - Modern */
 .service-item {
   background: var(--bg-secondary);
   border: 1px solid var(--border);
@@ -542,10 +526,10 @@ input:read-only {
 .service-body {
   margin-top: 16px;
   display: none;
-  animation: slideDown 0.3s ease-out;
+  animation: slideDownFade 0.3s ease-out;
 }
 
-@keyframes slideDown {
+@keyframes slideDownFade {
   from {
     opacity: 0;
     transform: translateY(-10px);
@@ -591,7 +575,6 @@ input:read-only {
   accent-color: var(--primary);
 }
 
-/* Partial Elements */
 .partial-wrapper {
   margin: 24px 0;
 }
@@ -649,7 +632,78 @@ input:read-only {
   to { opacity: 1; }
 }
 
-/* Buttons - Modern Gradient Style */
+.cost-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: end;
+  margin-bottom: 12px;
+  padding: 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.cost-row .form-group {
+  margin-bottom: 0;
+}
+
+.cost-row button {
+  padding: 12px 16px;
+  background: var(--danger);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  min-height: 48px;
+}
+
+@media (min-width: 768px) {
+  .cost-row button {
+    min-height: auto;
+  }
+}
+
+.cost-row button:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+}
+
+.executor-row {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.executor-row-header {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.executor-fields {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+@media (min-width: 768px) {
+  .executor-fields {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.executor-fields input {
+  padding: 10px 12px;
+  min-height: 40px;
+  font-size: 0.9rem;
+}
+
 .btn {
   padding: 14px 20px;
   border: none;
@@ -741,7 +795,6 @@ input:read-only {
   transform: translateY(0);
 }
 
-/* Chips - Modern Pills */
 .chips {
   display: flex;
   gap: 8px;
@@ -785,7 +838,6 @@ input:read-only {
   transform: scale(0.95);
 }
 
-/* Discount Buttons */
 .discount-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -843,7 +895,6 @@ input:read-only {
   box-shadow: var(--shadow-md), 0 0 20px rgba(245, 158, 11, 0.3);
 }
 
-/* Toggle Group */
 .toggle-group {
   display: flex;
   gap: 8px;
@@ -892,7 +943,6 @@ input:read-only {
   transform: scale(0.98);
 }
 
-/* Tables - Modern Design */
 .table-wrapper {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -974,7 +1024,6 @@ tfoot th:first-child {
   text-align: left;
 }
 
-/* Totals Grid - Modern Cards */
 .totals-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -1080,7 +1129,6 @@ tfoot th:first-child {
   box-shadow: var(--shadow-lg), 0 0 40px rgba(16, 185, 129, 0.5);
 }
 
-/* Chart Container */
 .chart-container {
   position: relative;
   height: 200px;
@@ -1097,7 +1145,6 @@ tfoot th:first-child {
   }
 }
 
-/* Export Buttons */
 .export-buttons {
   display: flex;
   gap: 10px;
@@ -1112,7 +1159,6 @@ tfoot th:first-child {
   }
 }
 
-/* Package Grid */
 .package-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -1126,19 +1172,16 @@ tfoot th:first-child {
   }
 }
 
-/* Summary Cards */
 .summary-cards {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
 }
 
-/* Utility Classes */
 .invis {
   display: none !important;
 }
 
-/* PDF Templates */
 #pdfTemplates {
   display: none;
   font-family: Arial, sans-serif;
@@ -1150,35 +1193,58 @@ tfoot th:first-child {
   width: 210mm;
   min-height: 297mm;
   padding: 20mm;
-  background: #fff;
-  color: #000;
+  background: #fff !important;
+  color: #000 !important;
 }
 
 #pdfTemplates h1 {
   font-size: 18px;
   margin-bottom: 10px;
   text-align: center;
+  color: #000 !important;
+}
+
+#pdfTemplates p {
+  color: #000 !important;
 }
 
 #pdfTemplates table {
   width: 100%;
   border-collapse: collapse;
   margin: 10px 0;
+  background: #fff !important;
 }
 
 #pdfTemplates th,
 #pdfTemplates td {
-  border: 1px solid #333;
+  border: 1px solid #333 !important;
   padding: 5px;
   text-align: left;
+  color: #000 !important;
+  background: #fff !important;
 }
 
 #pdfTemplates th {
-  background: #f0f0f0;
+  background: #f0f0f0 !important;
   font-weight: bold;
+  color: #000 !important;
 }
 
-/* Telegram Warning */
+#pdfTemplates tbody tr {
+  background: #fff !important;
+}
+
+#pdfTemplates tfoot th {
+  text-align: right;
+  color: #000 !important;
+  background: #f0f0f0 !important;
+}
+
+#pdfTemplates tfoot th:first-child {
+  text-align: left;
+  color: #000 !important;
+}
+
 #telegramWarning {
   display: none;
   background: rgba(245, 158, 11, 0.1);
@@ -1191,7 +1257,6 @@ tfoot th:first-child {
   animation: pulse 2s ease-in-out infinite;
 }
 
-/* Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -1209,18 +1274,6 @@ tfoot th:first-child {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--border-hover);
 }
-
-/* Loading Animation */
-@keyframes shimmer {
-  0% { background-position: -1000px 0; }
-  100% { background-position: 1000px 0; }
-}
-
-.loading {
-  animation: shimmer 2s infinite;
-  background: linear-gradient(90deg, var(--bg-secondary) 0%, var(--bg-tertiary) 50%, var(--bg-secondary) 100%);
-  background-size: 1000px 100%;
-}
 </style>
 </head>
 <body>
@@ -1233,10 +1286,8 @@ tfoot th:first-child {
 </div>
 
 <div class="main-container">
-  <!-- LEFT COLUMN -->
   <div class="left-column">
     
-    <!-- Автомобиль -->
     <div class="card">
       <h2>🚗 Автомобиль</h2>
       <div class="card-content">
@@ -1263,7 +1314,6 @@ tfoot th:first-child {
       </div>
     </div>
 
-    <!-- Полная защита вкруг -->
     <div class="card">
       <h2 class="collapsible collapsed">📦 Полная защита вкруг</h2>
       <div class="card-content collapsed">
@@ -1275,6 +1325,14 @@ tfoot th:first-child {
           <div><label>Материал арматурки:</label><input type="number" id="pkgArmMat" placeholder="0" step="0.01"></div>
           <div><label>Мотивация арматурщика:</label><input type="number" id="pkgArmMot" placeholder="0" step="0.01"></div>
         </div>
+        <div class="partial-wrapper">
+          <div class="partial-header">
+            <input type="checkbox" id="pkgCostsChk">
+            <label for="pkgCostsChk">Дополнительные затраты</label>
+          </div>
+          <div class="partial-content" id="pkgCostsContent"></div>
+        </div>
+        <button type="button" class="btn btn-secondary" id="btnAddPkgCost" style="margin-top:10px;display:none">+ Добавить затрату</button>
         <div style="margin-top:15px">
           <label class="markup-label">⚠️ Наценка на пакет (%):</label>
           <input type="number" id="pkgMarkup" placeholder="0" step="1">
@@ -1294,7 +1352,44 @@ tfoot th:first-child {
       </div>
     </div>
 
-    <!-- Форма оплаты -->
+    <div class="card">
+      <h2 class="collapsible collapsed">🛡️ Защита ударной части</h2>
+      <div class="card-content collapsed">
+        <div class="package-grid">
+          <div><label>Стоимость пленки:</label><input type="number" id="impactWrapMat" placeholder="0" step="0.01"></div>
+          <div><label>Мотивация оклейщика:</label><input type="number" id="impactWrapMot" placeholder="0" step="0.01"></div>
+          <div><label>Материалы подготовки:</label><input type="number" id="impactPrepMat" placeholder="0" step="0.01"></div>
+          <div><label>Мотивация подготовки:</label><input type="number" id="impactPrepMot" placeholder="0" step="0.01"></div>
+          <div><label>Материал арматурки:</label><input type="number" id="impactArmMat" placeholder="0" step="0.01"></div>
+          <div><label>Мотивация арматурщика:</label><input type="number" id="impactArmMot" placeholder="0" step="0.01"></div>
+        </div>
+        <div class="partial-wrapper">
+          <div class="partial-header">
+            <input type="checkbox" id="impactCostsChk">
+            <label for="impactCostsChk">Дополнительные затраты</label>
+          </div>
+          <div class="partial-content" id="impactCostsContent"></div>
+        </div>
+        <button type="button" class="btn btn-secondary" id="btnAddImpactCost" style="margin-top:10px;display:none">+ Добавить затрату</button>
+        <div style="margin-top:15px">
+          <label class="markup-label">⚠️ Наценка на пакет (%):</label>
+          <input type="number" id="impactMarkup" placeholder="0" step="1">
+          <div class="chips">
+            <span class="chip" data-markup-target="#impactMarkup">10</span>
+            <span class="chip" data-markup-target="#impactMarkup">20</span>
+            <span class="chip" data-markup-target="#impactMarkup">30</span>
+            <span class="chip" data-markup-target="#impactMarkup">40</span>
+            <span class="chip" data-markup-target="#impactMarkup">50</span>
+            <span class="chip" data-markup-target="#impactMarkup">60</span>
+            <span class="chip" data-markup-target="#impactMarkup">70</span>
+            <span class="chip" data-markup-target="#impactMarkup">80</span>
+            <span class="chip" data-markup-target="#impactMarkup">90</span>
+            <span class="chip" data-markup-target="#impactMarkup">100</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="card">
       <h2>💳 Форма оплаты</h2>
       <div class="card-content">
@@ -1319,37 +1414,31 @@ tfoot th:first-child {
       </div>
     </div>
 
-    <!-- Арматурные работы -->
     <div class="card">
       <h2 class="collapsible collapsed">🔧 Арматурные работы</h2>
       <div class="card-content collapsed" id="armContent"></div>
     </div>
 
-    <!-- Оклейка автомобиля -->
     <div class="card">
       <h2 class="collapsible collapsed">🎨 Оклейка автомобиля</h2>
       <div class="card-content collapsed" id="wrapContent"></div>
     </div>
 
-    <!-- Детейлинг -->
     <div class="card">
       <h2 class="collapsible collapsed">✨ Детейлинг</h2>
       <div class="card-content collapsed" id="detContent"></div>
     </div>
 
-    <!-- Стёкла -->
     <div class="card">
       <h2 class="collapsible collapsed">🪟 Стёкла</h2>
       <div class="card-content collapsed" id="glContent"></div>
     </div>
 
-    <!-- Прочие работы -->
     <div class="card">
       <h2 class="collapsible collapsed">🛠️ Прочие работы</h2>
       <div class="card-content collapsed" id="miscContent"></div>
     </div>
 
-    <!-- Итоги по направлениям -->
     <div class="card">
       <h2>📊 Итоги по направлениям</h2>
       <div class="card-content">
@@ -1357,7 +1446,6 @@ tfoot th:first-child {
       </div>
     </div>
 
-    <!-- Предпросмотр КП -->
     <div class="card">
       <h2>📄 Предпросмотр КП</h2>
       <div class="card-content">
@@ -1371,7 +1459,6 @@ tfoot th:first-child {
       </div>
     </div>
 
-    <!-- Предпросмотр себестоимости -->
     <div class="card">
       <h2>💰 Предпросмотр себестоимости</h2>
       <div class="card-content">
@@ -1389,25 +1476,18 @@ tfoot th:first-child {
       </div>
     </div>
 
-    <!-- Предпросмотр перечня работ -->
     <div class="card">
-      <h2>📋 Предпросмотр перечня работ</h2>
-      <div class="card-content">
-        <div class="table-wrapper">
-          <table id="workTable">
-            <thead><tr><th style="width:35%">Услуга</th><th style="width:20%">Исполнитель</th><th style="width:15%">Дата приема</th><th style="width:15%">Дата выдачи</th><th style="width:15%">Подпись</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
+      <h2 class="collapsible collapsed">👥 Исполнители</h2>
+      <div class="card-content collapsed">
+        <div id="executorsContent"></div>
+        <button type="button" class="btn btn-success" id="btnExportExecutors" style="width:100%;margin-top:16px">📋 Экспорт списка исполнителей (PDF)</button>
       </div>
     </div>
 
   </div>
 
-  <!-- RIGHT COLUMN -->
   <div class="right-column">
     
-    <!-- Скидки -->
     <div class="card">
       <h2>🎁 Скидки</h2>
       <div class="card-content">
@@ -1425,7 +1505,6 @@ tfoot th:first-child {
       </div>
     </div>
 
-    <!-- Итоги -->
     <div class="card">
       <h2>💎 Итоги</h2>
       <div class="card-content">
@@ -1443,7 +1522,6 @@ tfoot th:first-child {
       </div>
     </div>
 
-    <!-- Экспорт -->
     <div class="card">
       <h2>📥 Экспорт</h2>
       <div class="card-content">
@@ -1451,13 +1529,12 @@ tfoot th:first-child {
           ⚠️ <b>Telegram WebView:</b> Для скачивания PDF откройте в браузере (••• → Открыть в браузере)
         </div>
         <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px">
-          <button type="button" class="btn btn-primary" id="btnRecalc2" style="flex:1;min-width:140px">🔄 Пересчитать</button>
-          <button type="button" class="btn btn-secondary" id="btnReset2" style="flex:1;min-width:140px">🔃 Сброс</button>
+          <button type="button" class="btn btn-primary" id="btnRecalc" style="flex:1;min-width:140px">🔄 Пересчитать</button>
+          <button type="button" class="btn btn-secondary" id="btnReset" style="flex:1;min-width:140px">🔃 Сброс</button>
         </div>
         <div class="export-buttons">
           <button type="button" class="btn btn-success" id="btnExportKP">📄 КП (PDF)</button>
           <button type="button" class="btn btn-success" id="btnExportCost">💰 Себес (PDF)</button>
-          <button type="button" class="btn btn-success" id="btnExportWork">📋 Перечень работ (PDF)</button>
         </div>
       </div>
     </div>
@@ -1465,7 +1542,6 @@ tfoot th:first-child {
   </div>
 </div>
 
-<!-- PDF Templates -->
 <div id="pdfTemplates">
   <div id="pdfKP" class="pdf-block">
     <h1>КОММЕРЧЕСКОЕ ПРЕДЛОЖЕНИЕ</h1>
@@ -1488,12 +1564,12 @@ tfoot th:first-child {
     </table>
   </div>
   
-  <div id="pdfWork" class="pdf-block">
-    <h1>ПЕРЕЧЕНЬ РАБОТ</h1>
-    <p id="pdfWorkMeta" style="text-align:center;margin-bottom:20px"></p>
-    <table style="font-size:11px">
-      <thead><tr><th style="width:35%">Услуга</th><th style="width:20%">Исполнитель</th><th style="width:15%">Дата приема</th><th style="width:15%">Дата выдачи</th><th style="width:15%">Подпись</th></tr></thead>
-      <tbody id="pdfWorkTBody"></tbody>
+  <div id="pdfExecutors" class="pdf-block">
+    <h1>СПИСОК УСЛУГ И ИСПОЛНИТЕЛЕЙ</h1>
+    <p id="pdfExecutorsMeta" style="text-align:center;margin-bottom:20px"></p>
+    <table style="font-size:10px">
+      <thead><tr><th style="width:30%">Услуга</th><th style="width:20%">Исполнитель</th><th style="width:15%">Прием</th><th style="width:15%">Выдача</th><th style="width:20%">Примечание</th></tr></thead>
+      <tbody id="pdfExecutorsTBody"></tbody>
     </table>
   </div>
 </div>
@@ -1514,34 +1590,74 @@ const r100 = n => Math.round((n || 0) * 100) / 100;
 
 let disc = 0;
 let chart = null;
+let costCounter = 0;
 
-// Car Database
 const carDB = {
   Audi: ["A3", "A4", "A5", "A6", "Q3", "Q5", "Q7", "Q8"],
   BMW: ["1 Series", "3 Series", "5 Series", "7 Series", "X3", "X5"],
+  Buick: ["Cascada", "Enclave", "Encore", "Encore GX", "Envision", "GL8", "LaCrosse", "Regal", "Regal TourX", "Verano"],
   BYD: ["Dolphin", "Han", "Qin Plus", "Seal", "Song Plus", "Tang", "Yuan Plus"],
+  Cadillac: ["Celestiq", "CT4", "CT5", "CT6", "Escalade", "Escalade ESV", "Lyriq", "XT4", "XT5", "XT6"],
   Changan: ["CS35 Plus", "CS55 Plus", "CS75 Plus", "Uni-K", "Uni-T"],
   Chery: ["Arrizo 5", "Tiggo 2", "Tiggo 4", "Tiggo 7", "Tiggo 8"],
-  Ford: ["Explorer", "F-150", "Fiesta", "Focus", "Mustang"],
+  Chevrolet: ["Blazer", "Colorado", "Equinox", "Malibu", "Silverado 1500", "Silverado 2500/3500 HD", "Suburban", "Tahoe", "Trailblazer", "Traverse"],
+  Chrysler: ["200", "300", "Pacifica", "Pacifica Hybrid", "Town & Country", "Voyager"],
+  Dodge: ["Challenger", "Challenger SRT Hellcat", "Charger", "Charger SRT Hellcat", "Dart", "Durango", "Grand Caravan", "Hornet", "Journey", "Viper"],
+  Fisker: ["Alaska", "Ocean", "Pear", "Ronin"],
+  Ford: ["Bronco", "Edge", "Escape", "Expedition", "Explorer", "F-150", "Maverick", "Mustang", "Mustang Mach-E", "Ranger"],
   Geely: ["Atlas", "Coolray", "Emgrand", "Monjaro", "Tugella"],
+  GMC: ["Acadia", "Canyon", "Hummer EV Pickup", "Hummer EV SUV", "Savana", "Sierra 1500", "Sierra HD", "Terrain", "Yukon", "Yukon XL"],
   Haval: ["Dargo", "F7", "F7x", "H6", "H9", "Jolion"],
   Honda: ["Accord", "Civic", "CR-V", "Fit", "HR-V"],
+  Hummer: ["EV Pickup", "EV SUV"],
   Hyundai: ["Creta", "Elantra", "Santa Fe", "Sonata", "Tucson"],
+  Jeep: ["Cherokee", "Compass", "Gladiator", "Grand Cherokee", "Grand Wagoneer", "Renegade", "Wagoneer", "Wagoneer S", "Wrangler", "Wrangler 4xe"],
   Kia: ["Cerato", "Ceed", "Rio", "Seltos", "Sorento", "Sportage"],
+  Lincoln: ["Aviator", "Continental", "Corsair", "MKC", "MKT", "MKX", "MKZ", "Nautilus", "Navigator", "Navigator L"],
   Lixiang: ["I8", "L6", "L7", "L8", "L9", "Mega", "One"],
+  Lucid: ["Air", "Air Grand Touring", "Air Pure", "Air Sapphire", "Air Touring", "Gravity", "Gravity Grand Touring", "Gravity Touring"],
   Mazda: ["CX-3", "CX-30", "CX-5", "Mazda3", "Mazda6"],
   "Mercedes-Benz": ["A-Class", "C-Class", "E-Class", "GLC", "GLE", "S-Class"],
   Nissan: ["Altima", "Qashqai", "Rogue", "Sentra", "X-Trail"],
   Omoda: ["C5", "C7", "C9", "E5", "S5"],
+  Ram: ["1500", "1500 Classic", "1500 TRX", "2500", "3500", "4500 Chassis Cab", "5500 Chassis Cab", "ProMaster", "ProMaster City", "ProMaster Rapid"],
+  Rivian: ["EDV", "R1S", "R1T", "R2", "R3", "R3X", "RCV"],
   Tank: ["300", "400", "500", "700"],
-  Tesla: ["Model 3", "Model S", "Model X", "Model Y"],
+  Tesla: ["Cybertruck", "Model 3", "Model S", "Model X", "Model Y", "Semi"],
   Toyota: ["Camry", "Corolla", "Hilux", "Land Cruiser 300", "RAV4", "Yaris"],
   Volkswagen: ["Arteon", "Golf", "Passat", "Polo", "T-Roc", "Tiguan"],
   Voyah: ["Courage", "Dream", "Free", "Passion"],
   Zeekr: ["001", "007", "009", "7X", "9X", "Mix", "X"]
 };
 
-// Partial Elements
+const serviceDescriptions = {
+  'Полная защита вкруг': 'Полная защита глянцевых кузовных элементов автомобиля с разбором съемных элементов и подготовкой кузова',
+  'Защита ударной части': 'Защита ударной части автомобиля с разбором съемных элементов и подготовкой кузова',
+  'Демонтаж элементов': 'Снятие кузовных элементов для проведения работ',
+  'Монтаж элементов': 'Установка кузовных элементов после проведения работ',
+  'Демонтаж и монтаж': 'Полный цикл снятия и установки элементов кузова',
+  'Мойка кузова перед оклейкой': 'Подготовительная мойка автомобиля перед оклейкой',
+  'Подготовка кузова': 'Комплексная подготовка поверхности к нанесению пленки',
+  'Глубокая чистка кузова': 'Детальная очистка кузова от загрязнений и дефектов',
+  'Полировка кузова': 'Восстановление и выравнивание лакокрасочного покрытия',
+  'Нанесение составов на кузов': 'Обработка кузова защитными составами',
+  'Химчистка салона': 'Глубокая очистка салона автомобиля',
+  'Нанесение составов на элементы салона': 'Защитная обработка элементов интерьера',
+  'Полировка глянцевых элементов': 'Восстановление блеска глянцевых поверхностей',
+  'Тонирование задней полусферы': 'Установка тонировочной пленки на заднюю полусферу',
+  'Тонирование передних боковых стекол': 'Установка тонировочной пленки на передние боковые стекла',
+  'Тонирование лобового стекла': 'Установка тонировочной пленки на лобовое стекло',
+  'Бронирование лобового стекла': 'Установка защитной пленки на лобовое стекло',
+  'Малярные работы': 'Локальный окрас элемента',
+  'Выпрямление вмятин без покраски': 'Выпрямление повреждений ЛКП без окраса',
+  'Реставрация ЛКП': 'Работы по лакокрасочному покрытию автомобиля, корректировка и скрытие повреждений',
+  'Шумоизоляция': 'Работы по дооснащению автомобиля материалами, снижающими вибрации, шумы и посторонние звуки',
+  'PPF прозрачный вкруг': 'Полная защита глянцевых кузовных элементов автомобиля',
+  'PPF цветной вкруг': 'Полная защита кузовных элементов цветной пленкой',
+  'PPF матовый вкруг': 'Полная защита кузовных элементов матовой пленкой',
+  'ПВХ полная оклейка': 'Полная оклейка автомобиля виниловой пленкой'
+};
+
 const partElements = [
   'Передний бампер', 'Задний бампер', 'Передний бампер (доп)', 'Задний бампер (доп)',
   'Передняя оптика', 'Противотуманные фары', 'Задние фонари', 'Решетка радиатора',
@@ -1553,7 +1669,6 @@ const partElements = [
   'Крышка багажника', 'Багажник (доп)', 'Оклейка элементов интерьера', 'Антихром'
 ];
 
-// Service Lists
 const armServices = ['Демонтаж элементов', 'Монтаж элементов', 'Демонтаж и монтаж'];
 const detailServices = [
   'Мойка кузова перед оклейкой', 'Подготовка кузова', 'Глубокая чистка кузова',
@@ -1569,7 +1684,6 @@ const miscServices = [
   'Реставрация ЛКП', 'Шумоизоляция'
 ];
 
-// Theme Toggle
 window.toggleTheme = function() {
   const body = document.body;
   const icon = q('#themeIcon');
@@ -1586,7 +1700,6 @@ window.toggleTheme = function() {
   }
 };
 
-// Fill Brands
 function fillBrands() {
   const s = q('#brand');
   s.innerHTML = '<option value="">Выберите бренд</option><option value="manual">Ввести вручную</option>';
@@ -1598,7 +1711,6 @@ function fillBrands() {
   });
 }
 
-// Brand Change
 function onBrandChange() {
   const b = q('#brand').value;
   const m = q('#model');
@@ -1619,7 +1731,6 @@ function onBrandChange() {
   }
 }
 
-// Model Change
 function onModelChange() {
   const m = q('#model').value;
   const mm = q('#modelManual');
@@ -1627,7 +1738,6 @@ function onModelChange() {
   else mm.classList.add('invis');
 }
 
-// Render Service List
 function renderServiceList(containerId, services, classPrefix) {
   const container = q(containerId);
   let html = '';
@@ -1653,8 +1763,16 @@ function renderServiceList(containerId, services, classPrefix) {
   
   html += `<div id="${classPrefix}Dyn"></div>
     <button type="button" class="btn btn-secondary" id="btnAdd${classPrefix.charAt(0).toUpperCase() + classPrefix.slice(1)}">+ Дополнительно</button>
+    <div class="partial-wrapper">
+      <div class="partial-header">
+        <input type="checkbox" id="${classPrefix}CostsChk">
+        <label for="${classPrefix}CostsChk">Дополнительные затраты</label>
+      </div>
+      <div class="partial-content" id="${classPrefix}CostsContent"></div>
+    </div>
+    <button type="button" class="btn btn-secondary" id="btnAdd${classPrefix.charAt(0).toUpperCase() + classPrefix.slice(1)}Cost" style="margin-top:10px;display:none">+ Добавить затрату</button>
     <div style="margin-top:15px">
-      <label class="markup-label">Наценка (%):</label>
+      <label class="markup-label">⚠️ Наценка (%):</label>
       <input type="number" id="${classPrefix}Markup" placeholder="0" step="1">
       <div class="chips">
         <span class="chip" data-markup-target="#${classPrefix}Markup">10</span>
@@ -1673,7 +1791,6 @@ function renderServiceList(containerId, services, classPrefix) {
   container.innerHTML = html;
 }
 
-// Render Wrap Content
 function renderWrapContent() {
   const container = q('#wrapContent');
   let html = `<h3 style="margin-bottom:10px;font-size:1.05rem;font-weight:700">PPF</h3>
@@ -1732,6 +1849,14 @@ function renderWrapContent() {
     </div>
     <div id="wrapDyn"></div>
     <button type="button" class="btn btn-secondary" id="btnAddWrap">+ Дополнительно</button>
+    <div class="partial-wrapper">
+      <div class="partial-header">
+        <input type="checkbox" id="wrapCostsChk">
+        <label for="wrapCostsChk">Дополнительные затраты</label>
+      </div>
+      <div class="partial-content" id="wrapCostsContent"></div>
+    </div>
+    <button type="button" class="btn btn-secondary" id="btnAddWrapCost" style="margin-top:10px;display:none">+ Добавить затрату</button>
     <div style="margin-top:20px">
       <label class="markup-label">⚠️ Наценка на оклейку (%):</label>
       <input type="number" id="wrapMarkup" placeholder="0" step="1">
@@ -1752,7 +1877,6 @@ function renderWrapContent() {
   container.innerHTML = html;
 }
 
-// Render Partial Lists
 function renderPartialLists() {
   const ppf = q('#ppfPartContent');
   const pvc = q('#pvcPartContent');
@@ -1790,11 +1914,11 @@ function renderPartialLists() {
   pvc.innerHTML = pvcHtml;
 }
 
-// Render Summary Cards
 function renderSummaryCards() {
   const container = q('#summaryContent');
   const sections = [
     { id: 'Pkg', label: 'Полная защита' },
+    { id: 'Impact', label: 'Защита ударной части' },
     { id: 'Arm', label: 'Арматурные' },
     { id: 'Wrap', label: 'Оклейка' },
     { id: 'Det', label: 'Детейлинг' },
@@ -1817,7 +1941,22 @@ function renderSummaryCards() {
   container.innerHTML = html;
 }
 
-// Add Dynamic Row
+function addCostRow(prefix) {
+  costCounter++;
+  const container = q(`#${prefix}CostsContent`);
+  const row = document.createElement('div');
+  row.className = 'cost-row';
+  row.innerHTML = `
+    <div class="form-group">
+      <input type="text" placeholder="Название затраты" class="${prefix}-cost-name">
+      <input type="number" placeholder="Сумма (₽)" class="${prefix}-cost-val" step="0.01">
+    </div>
+    <button type="button" onclick="this.closest('.cost-row').remove();renderAll()">❌</button>
+  `;
+  container.appendChild(row);
+  renderAll();
+}
+
 let dynCounter = 0;
 function addDynRow(id, cls) {
   const c = q(id);
@@ -1841,7 +1980,6 @@ function addDynRow(id, cls) {
   c.appendChild(d);
 }
 
-// Init Service Toggles
 function initServiceToggles() {
   qa('.service-item').forEach(item => {
     const chk = item.querySelector('.service-header input[type="checkbox"]');
@@ -1864,38 +2002,38 @@ function initServiceToggles() {
     };
   });
   
-  // PPF/PVC Partial toggles
-  const ppfPartChk = q('#ppfPartChk');
-  const ppfPartContent = q('#ppfPartContent');
-  if (ppfPartChk && ppfPartContent) {
-    ppfPartChk.onchange = function() {
-      if (ppfPartChk.checked) {
-        ppfPartContent.classList.add('open');
+  ['ppfPartChk', 'pvcPartChk', 'pkgCostsChk', 'impactCostsChk', 'armCostsChk', 'wrapCostsChk', 'detCostsChk', 'glCostsChk', 'miscCostsChk'].forEach(id => {
+    const chk = q(`#${id}`);
+    if (!chk) return;
+    const content = q(`#${id.replace('Chk', 'Content')}`);
+    const btn = q(`#btnAdd${id.replace('Chk', '').replace('Costs', 'Cost')}`);
+    if (!content) return;
+    
+    chk.onchange = function() {
+      if (chk.checked) {
+        content.classList.add('open');
+        if (btn) btn.style.display = 'block';
       } else {
-        ppfPartContent.classList.remove('open');
+        content.classList.remove('open');
+        if (btn) btn.style.display = 'none';
       }
     };
-  }
-  
-  const pvcPartChk = q('#pvcPartChk');
-  const pvcPartContent = q('#pvcPartContent');
-  if (pvcPartChk && pvcPartContent) {
-    pvcPartChk.onchange = function() {
-      if (pvcPartChk.checked) {
-        pvcPartContent.classList.add('open');
-      } else {
-        pvcPartContent.classList.remove('open');
-      }
-    };
-  }
+  });
 }
 
-// [ПРОДОЛЖЕНИЕ В СЛЕДУЮЩЕМ СООБЩЕНИИ - ФАЙЛ СЛИШКОМ БОЛЬШОЙ]
+function collectAdditionalCosts(prefix) {
+  let total = 0;
+  qa(`#${prefix}CostsContent .cost-row`).forEach(row => {
+    const val = parseFloat(row.querySelector(`.${prefix}-cost-val`)?.value) || 0;
+    total += val;
+  });
+  return total;
+}
 
-// Collect All Data
 function collectAll() {
   const sums = {
     pkg: { mat: 0, mot: 0, names: [] },
+    impact: { mat: 0, mot: 0, names: [] },
     arm: { mat: 0, mot: 0, names: [] },
     wrap: { mat: 0, mot: 0, details: [] },
     det: { mat: 0, mot: 0, names: [] },
@@ -1903,21 +2041,34 @@ function collectAll() {
     ms: { mat: 0, mot: 0, names: [] }
   };
   
-  // Package
   const pkgWrapMat = parseFloat(q('#pkgWrapMat')?.value) || 0;
   const pkgWrapMot = parseFloat(q('#pkgWrapMot')?.value) || 0;
   const pkgPrepMat = parseFloat(q('#pkgPrepMat')?.value) || 0;
   const pkgPrepMot = parseFloat(q('#pkgPrepMot')?.value) || 0;
   const pkgArmMat = parseFloat(q('#pkgArmMat')?.value) || 0;
   const pkgArmMot = parseFloat(q('#pkgArmMot')?.value) || 0;
+  const pkgCosts = collectAdditionalCosts('pkg');
   
-  if (pkgWrapMat > 0 || pkgWrapMot > 0 || pkgPrepMat > 0 || pkgPrepMot > 0 || pkgArmMat > 0 || pkgArmMot > 0) {
-    sums.pkg.mat = pkgWrapMat + pkgPrepMat + pkgArmMat;
+  if (pkgWrapMat > 0 || pkgWrapMot > 0 || pkgPrepMat > 0 || pkgPrepMot > 0 || pkgArmMat > 0 || pkgArmMot > 0 || pkgCosts > 0) {
+    sums.pkg.mat = pkgWrapMat + pkgPrepMat + pkgArmMat + pkgCosts;
     sums.pkg.mot = pkgWrapMot + pkgPrepMot + pkgArmMot;
-    sums.pkg.names.push('Полная защита');
+    sums.pkg.names.push('Полная защита вкруг');
   }
   
-  // Arm
+  const impactWrapMat = parseFloat(q('#impactWrapMat')?.value) || 0;
+  const impactWrapMot = parseFloat(q('#impactWrapMot')?.value) || 0;
+  const impactPrepMat = parseFloat(q('#impactPrepMat')?.value) || 0;
+  const impactPrepMot = parseFloat(q('#impactPrepMot')?.value) || 0;
+  const impactArmMat = parseFloat(q('#impactArmMat')?.value) || 0;
+  const impactArmMot = parseFloat(q('#impactArmMot')?.value) || 0;
+  const impactCosts = collectAdditionalCosts('impact');
+  
+  if (impactWrapMat > 0 || impactWrapMot > 0 || impactPrepMat > 0 || impactPrepMot > 0 || impactArmMat > 0 || impactArmMot > 0 || impactCosts > 0) {
+    sums.impact.mat = impactWrapMat + impactPrepMat + impactArmMat + impactCosts;
+    sums.impact.mot = impactWrapMot + impactPrepMot + impactArmMot;
+    sums.impact.names.push('Защита ударной части');
+  }
+  
   qa('.arm-chk').forEach(c => {
     if (c.checked) {
       const item = c.closest('.service-item');
@@ -1948,7 +2099,8 @@ function collectAll() {
     }
   });
   
-  // Wrap - PPF Clear
+  sums.arm.mat += collectAdditionalCosts('arm');
+  
   if (q('#ppfClearChk')?.checked) {
     const pr = parseFloat(q('#ppfClearPrice')?.value) || 0;
     let m = parseFloat(q('#ppfClearM')?.value) || 0;
@@ -1960,7 +2112,6 @@ function collectAll() {
     sums.wrap.details.push(['PPF прозрачный вкруг', m, pr, mat, mot, 0]);
   }
   
-  // PPF Color
   if (q('#ppfColorChk')?.checked) {
     const pr = parseFloat(q('#ppfColorPrice')?.value) || 0;
     let m = parseFloat(q('#ppfColorM')?.value) || 0;
@@ -1972,7 +2123,6 @@ function collectAll() {
     sums.wrap.details.push(['PPF цветной вкруг', m, pr, mat, mot, 0]);
   }
   
-  // PPF Mat
   if (q('#ppfMatChk')?.checked) {
     const pr = parseFloat(q('#ppfMatPrice')?.value) || 0;
     let m = parseFloat(q('#ppfMatM')?.value) || 0;
@@ -1984,7 +2134,6 @@ function collectAll() {
     sums.wrap.details.push(['PPF матовый вкруг', m, pr, mat, mot, 0]);
   }
   
-  // PPF Partial
   qa('.ppf-part-chk').forEach(c => {
     if (c.checked) {
       const ppfPartMainChk = q('#ppfPartChk');
@@ -2007,7 +2156,6 @@ function collectAll() {
     }
   });
   
-  // PVC Full
   if (q('#pvcFullChk')?.checked) {
     const pr = parseFloat(q('#pvcFullPrice')?.value) || 0;
     let m = parseFloat(q('#pvcFullM')?.value) || 0;
@@ -2019,7 +2167,6 @@ function collectAll() {
     sums.wrap.details.push(['ПВХ полная оклейка', m, pr, mat, mot, 0]);
   }
   
-  // PVC Partial
   qa('.pvc-part-chk').forEach(c => {
     if (c.checked) {
       const pvcPartMainChk = q('#pvcPartChk');
@@ -2042,7 +2189,6 @@ function collectAll() {
     }
   });
   
-  // Wrap Dynamic
   qa('#wrapDyn .service-item').forEach(item => {
     const c = item.querySelector('input[type=checkbox]');
     if (c?.checked) {
@@ -2061,7 +2207,8 @@ function collectAll() {
     }
   });
   
-  // Det, Gl, Misc
+  sums.wrap.mat += collectAdditionalCosts('wrap');
+  
   ['det', 'gl', 'misc'].forEach(tp => {
     const key = tp === 'misc' ? 'ms' : tp;
     
@@ -2094,21 +2241,22 @@ function collectAll() {
         }
       }
     });
+    
+    sums[key].mat += collectAdditionalCosts(tp);
   });
   
   return sums;
 }
 
-// Tax Coefficient
 function taxCoef() {
   const m = q('input[name=payMode]:checked')?.value;
   return m === 'card' ? 0.08 : m === 'ip' ? 0.08 : m === 'ooo' ? 0.20 : 0;
 }
 
-// Markups
 function markups() {
   return {
     pkg: parseFloat(q('#pkgMarkup')?.value) || 0,
+    impact: parseFloat(q('#impactMarkup')?.value) || 0,
     arm: parseFloat(q('#armMarkup')?.value) || 0,
     wrap: parseFloat(q('#wrapMarkup')?.value) || 0,
     det: parseFloat(q('#detMarkup')?.value) || 0,
@@ -2117,7 +2265,10 @@ function markups() {
   };
 }
 
-// Render KP
+function getServiceDescription(name) {
+  return serviceDescriptions[name] || name;
+}
+
 function renderKP(s, mu) {
   const tb = q('#kpTable tbody');
   if (!tb) return;
@@ -2127,11 +2278,12 @@ function renderKP(s, mu) {
   let tot = 0;
   
   const rows = [
-    { t: 'Полная защита', det: 'Полная защита глянцевых кузовных элементов автомобиля с разбором съемных элементов и подготовкой кузова', sum: s.pkg, mu: mu.pkg },
-    { t: 'Арматурные', det: 'Демонтаж и монтаж съемных элементов кузова', sum: s.arm, mu: mu.arm },
+    { t: 'Полная защита вкруг', det: getServiceDescription('Полная защита вкруг'), sum: s.pkg, mu: mu.pkg },
+    { t: 'Защита ударной части', det: getServiceDescription('Защита ударной части'), sum: s.impact, mu: mu.impact },
+    { t: 'Арматурные работы', det: 'Демонтаж и монтаж съемных элементов кузова', sum: s.arm, mu: mu.arm },
     { t: 'Детейлинг', det: 'Комплексная чистка и подготовка кузова и салона автомобиля', sum: s.det, mu: mu.det },
     { t: 'Стёкла', det: 'Тонирование и защита стекол автомобиля', sum: s.gl, mu: mu.gl },
-    { t: 'Прочие', det: 'Дополнительные работы по кузову автомобиля', sum: s.ms, mu: mu.ms }
+    { t: 'Прочие работы', det: 'Дополнительные работы по кузову автомобиля', sum: s.ms, mu: mu.ms }
   ];
   
   rows.forEach(r => {
@@ -2149,7 +2301,6 @@ function renderKP(s, mu) {
     tb.appendChild(tr);
   });
   
-  // Wrap details
   if (s.wrap.details && s.wrap.details.length > 0) {
     s.wrap.details.forEach(detail => {
       const [name, meters, price, mat, mot, itemMarkup] = detail;
@@ -2164,8 +2315,8 @@ function renderKP(s, mu) {
       tot += pr;
       
       const tr = document.createElement('tr');
-      const displayName = name.includes('PPF') || name.includes('ПВХ') ? 'Оклейка' : 'Оклейка';
-      const displayDesc = name.includes('вкруг') ? 'Полная защита глянцевых кузовных элементов автомобиля' : name;
+      const displayName = 'Оклейка автомобиля';
+      const displayDesc = getServiceDescription(name);
       tr.innerHTML = `<td style="text-align:left">${displayName}</td><td style="text-align:left">${displayDesc}</td><td>${fmt(pr)}</td>`;
       tb.appendChild(tr);
     });
@@ -2174,18 +2325,18 @@ function renderKP(s, mu) {
   q('#kpTotal').textContent = fmt(tot);
 }
 
-// Render Cost
 function renderCost(s) {
   const tb = q('#costTable tbody');
   if (!tb) return;
   tb.innerHTML = '';
   
   const rows = [
-    { t: 'Полная защита', sum: s.pkg },
-    { t: 'Арматурные', sum: s.arm },
+    { t: 'Полная защита вкруг', sum: s.pkg },
+    { t: 'Защита ударной части', sum: s.impact },
+    { t: 'Арматурные работы', sum: s.arm },
     { t: 'Детейлинг', sum: s.det },
     { t: 'Стёкла', sum: s.gl },
-    { t: 'Прочие', sum: s.ms }
+    { t: 'Прочие работы', sum: s.ms }
   ];
   
   let totM = 0, totO = 0;
@@ -2221,54 +2372,68 @@ function renderCost(s) {
   q('#cTotal').textContent = fmt(totM + totO);
 }
 
-// Render Work
-function renderWork(s) {
-  const tb = q('#workTable tbody');
-  if (!tb) return;
-  tb.innerHTML = '';
+function renderExecutors(s) {
+  const container = q('#executorsContent');
+  if (!container) return;
   
-  const rows = [
-    { t: 'Полная защита', sum: s.pkg },
-    { t: 'Арматурные', sum: s.arm },
-    { t: 'Детейлинг', sum: s.det },
-    { t: 'Стёкла', sum: s.gl },
-    { t: 'Прочие', sum: s.ms }
-  ];
+  let html = '';
+  let execIndex = 0;
   
-  rows.forEach(r => {
-    const base = r.sum.mat + r.sum.mot;
-    if (base <= 0) return;
-    
-    const tr1 = document.createElement('tr');
-    tr1.innerHTML = `<td style="text-align:left" rowspan="2">${r.t}</td><td>Исполнитель 1</td><td></td><td></td><td></td>`;
-    tb.appendChild(tr1);
-    
-    const tr2 = document.createElement('tr');
-    tr2.innerHTML = `<td>Исполнитель 2</td><td></td><td></td><td></td>`;
-    tb.appendChild(tr2);
+  const allServices = [];
+  
+  if (s.pkg.mat + s.pkg.mot > 0) {
+    allServices.push({ name: 'Полная защита вкруг', idx: execIndex++ });
+  }
+  
+  if (s.impact.mat + s.impact.mot > 0) {
+    allServices.push({ name: 'Защита ударной части', idx: execIndex++ });
+  }
+  
+  s.arm.names.forEach(name => {
+    allServices.push({ name, idx: execIndex++ });
   });
   
   if (s.wrap.details && s.wrap.details.length > 0) {
     s.wrap.details.forEach(detail => {
-      const [name, meters, price, mat, mot, itemMarkup] = detail;
-      if (mat <= 0 && mot <= 0) return;
-      
-      const tr1 = document.createElement('tr');
-      tr1.innerHTML = `<td style="text-align:left" rowspan="2">${name}</td><td>Исполнитель 1</td><td></td><td></td><td></td>`;
-      tb.appendChild(tr1);
-      
-      const tr2 = document.createElement('tr');
-      tr2.innerHTML = `<td>Исполнитель 2</td><td></td><td></td><td></td>`;
-      tb.appendChild(tr2);
+      allServices.push({ name: detail[0], idx: execIndex++ });
     });
   }
+  
+  s.det.names.forEach(name => {
+    allServices.push({ name, idx: execIndex++ });
+  });
+  
+  s.gl.names.forEach(name => {
+    allServices.push({ name, idx: execIndex++ });
+  });
+  
+  s.ms.names.forEach(name => {
+    allServices.push({ name, idx: execIndex++ });
+  });
+  
+  allServices.forEach(srv => {
+    html += `<div class="executor-row">
+      <div class="executor-row-header">${srv.name}</div>
+      <div class="executor-fields">
+        <input type="text" id="exec${srv.idx}name" placeholder="Исполнитель">
+        <input type="date" id="exec${srv.idx}receive" placeholder="Дата приема">
+        <input type="date" id="exec${srv.idx}return" placeholder="Дата выдачи">
+        <input type="text" id="exec${srv.idx}note" placeholder="Примечание">
+      </div>
+    </div>`;
+  });
+  
+  container.innerHTML = html;
 }
 
-// Render Badges
 function renderBadges(s, mu) {
   q('#sumPkgMat').value = s.pkg.mat.toFixed(2);
   q('#sumPkgMot').value = s.pkg.mot.toFixed(2);
   q('#sebPkg').value = (s.pkg.mat + s.pkg.mot).toFixed(2);
+  
+  q('#sumImpactMat').value = s.impact.mat.toFixed(2);
+  q('#sumImpactMot').value = s.impact.mot.toFixed(2);
+  q('#sebImpact').value = (s.impact.mat + s.impact.mot).toFixed(2);
   
   q('#sumArmMat').value = s.arm.mat.toFixed(2);
   q('#sumArmMot').value = s.arm.mot.toFixed(2);
@@ -2291,6 +2456,7 @@ function renderBadges(s, mu) {
   q('#sebMisc').value = (s.ms.mat + s.ms.mot).toFixed(2);
   
   const pkgTotal = s.pkg.mat + s.pkg.mot;
+  const impactTotal = s.impact.mat + s.impact.mot;
   const armTotal = s.arm.mat + s.arm.mot;
   const wrapTotal = s.wrap.mat + s.wrap.mot;
   const detTotal = s.det.mat + s.det.mot;
@@ -2298,6 +2464,7 @@ function renderBadges(s, mu) {
   const msTotal = s.ms.mat + s.ms.mot;
   
   const pkgCard = q('#sumPkgCard');
+  const impactCard = q('#sumImpactCard');
   const armCard = q('#sumArmCard');
   const wrapCard = q('#sumWrapCard');
   const detCard = q('#sumDetCard');
@@ -2305,15 +2472,17 @@ function renderBadges(s, mu) {
   const miscCard = q('#sumMiscCard');
   
   if (pkgCard) pkgCard.style.display = pkgTotal > 0 ? 'block' : 'none';
+  if (impactCard) impactCard.style.display = impactTotal > 0 ? 'block' : 'none';
   if (armCard) armCard.style.display = armTotal > 0 ? 'block' : 'none';
   if (wrapCard) wrapCard.style.display = wrapTotal > 0 ? 'block' : 'none';
   if (detCard) detCard.style.display = detTotal > 0 ? 'block' : 'none';
   if (glCard) glCard.style.display = glTotal > 0 ? 'block' : 'none';
   if (miscCard) miscCard.style.display = msTotal > 0 ? 'block' : 'none';
   
-  const baseAll = pkgTotal + armTotal + wrapTotal + detTotal + glTotal + msTotal;
+  const baseAll = pkgTotal + impactTotal + armTotal + wrapTotal + detTotal + glTotal + msTotal;
   
   const pkgMarkup = r100(pkgTotal * (mu.pkg || 0) / 100);
+  const impactMarkup = r100(impactTotal * (mu.impact || 0) / 100);
   const armMarkup = r100(armTotal * (mu.arm || 0) / 100);
   const detMarkup = r100(detTotal * (mu.det || 0) / 100);
   const glMarkup = r100(glTotal * (mu.gl || 0) / 100);
@@ -2331,15 +2500,15 @@ function renderBadges(s, mu) {
     wrapMarkup = r100(wrapTotal * (mu.wrap || 0) / 100);
   }
   
-  const totalMarkup = pkgMarkup + armMarkup + wrapMarkup + detMarkup + glMarkup + msMarkup;
+  const totalMarkup = pkgMarkup + impactMarkup + armMarkup + wrapMarkup + detMarkup + glMarkup + msMarkup;
   const markupWithDiscount = r100(totalMarkup * (1 - disc / 100));
   const afterMarkup = baseAll + markupWithDiscount;
   const taxK = taxCoef();
   const tax = r100(afterMarkup * taxK);
   const fin = afterMarkup + tax;
   
-  q('#grandMat').textContent = fmt(s.pkg.mat + s.arm.mat + s.wrap.mat + s.det.mat + s.gl.mat + s.ms.mat);
-  q('#grandMot').textContent = fmt(s.pkg.mot + s.arm.mot + s.wrap.mot + s.det.mot + s.gl.mot + s.ms.mot);
+  q('#grandMat').textContent = fmt(s.pkg.mat + s.impact.mat + s.arm.mat + s.wrap.mat + s.det.mat + s.gl.mat + s.ms.mat);
+  q('#grandMot').textContent = fmt(s.pkg.mot + s.impact.mot + s.arm.mot + s.wrap.mot + s.det.mot + s.gl.mot + s.ms.mot);
   q('#grandBase').textContent = fmt(baseAll);
   q('#grandMarkup').textContent = fmt(markupWithDiscount);
   q('#grandTax').textContent = fmt(tax);
@@ -2347,8 +2516,8 @@ function renderBadges(s, mu) {
   
   if (chart) {
     chart.data.datasets[0].data = [
-      s.pkg.mat + s.arm.mat + s.wrap.mat + s.det.mat + s.gl.mat + s.ms.mat,
-      s.pkg.mot + s.arm.mot + s.wrap.mot + s.det.mot + s.gl.mot + s.ms.mot,
+      s.pkg.mat + s.impact.mat + s.arm.mat + s.wrap.mat + s.det.mat + s.gl.mat + s.ms.mat,
+      s.pkg.mot + s.impact.mot + s.arm.mot + s.wrap.mot + s.det.mot + s.gl.mot + s.ms.mot,
       markupWithDiscount,
       tax
     ];
@@ -2356,21 +2525,20 @@ function renderBadges(s, mu) {
   }
 }
 
-// Render All
 function renderAll() {
   const s = collectAll();
   const mu = markups();
   renderBadges(s, mu);
   renderKP(s, mu);
   renderCost(s);
-  renderWork(s);
+  renderExecutors(s);
   highlightMarkupFields(s, mu);
 }
 
-// Highlight Markup Fields
 function highlightMarkupFields(s, mu) {
   const checks = [
     { sum: s.pkg.mat + s.pkg.mot, markup: mu.pkg, field: '#pkgMarkup' },
+    { sum: s.impact.mat + s.impact.mot, markup: mu.impact, field: '#impactMarkup' },
     { sum: s.arm.mat + s.arm.mot, markup: mu.arm, field: '#armMarkup' },
     { sum: s.wrap.mat + s.wrap.mot, markup: mu.wrap, field: '#wrapMarkup' },
     { sum: s.det.mat + s.det.mot, markup: mu.det, field: '#detMarkup' },
@@ -2389,7 +2557,6 @@ function highlightMarkupFields(s, mu) {
   });
 }
 
-// Init Theme
 function initTheme() {
   const sv = localStorage.getItem('theme');
   const icon = q('#themeIcon');
@@ -2402,7 +2569,6 @@ function initTheme() {
     icon.textContent = '☀️';
   }
   
-  // Toggle buttons
   qa('.toggle-btn').forEach(b => {
     b.addEventListener('click', () => {
       const r = b.querySelector('input[type=radio]');
@@ -2415,7 +2581,6 @@ function initTheme() {
     });
   });
   
-  // Collapsible sections
   qa('.card h2.collapsible').forEach(h => {
     h.addEventListener('click', () => {
       h.classList.toggle('collapsed');
@@ -2424,7 +2589,6 @@ function initTheme() {
   });
 }
 
-// Init Discounts
 function initDiscounts() {
   qa('.discount-btn').forEach(b => {
     b.addEventListener('click', () => {
@@ -2443,7 +2607,6 @@ function initDiscounts() {
   });
 }
 
-// Init Chart
 function initChart() {
   const ctx = q('#pieChart')?.getContext('2d');
   if (!ctx || !window.Chart) return;
@@ -2495,7 +2658,6 @@ function initChart() {
   });
 }
 
-// Export PDF
 function exportPDF(blockId, filename) {
   const { jsPDF } = window.jspdf || {};
   if (!jsPDF || !window.html2canvas) {
@@ -2533,7 +2695,6 @@ function exportPDF(blockId, filename) {
   }, 200);
 }
 
-// Prep KP
 function prepKP() {
   const tb = q('#pdfKPTBody');
   if (!tb) return;
@@ -2562,7 +2723,6 @@ function prepKP() {
   q('#pdfKPMeta').innerHTML = `Автомобиль: ${br || '—'} ${md || '—'} ${yr}<br>Дата: ${dateStr} ${timeStr}<br><b><i>Условия оплаты: ${payText}</i></b>`;
 }
 
-// Prep Cost
 function prepCost() {
   const tb = q('#pdfCostTBody');
   if (!tb) return;
@@ -2585,41 +2745,37 @@ function prepCost() {
   q('#pdfCostMeta').textContent = `Автомобиль: ${br || '—'} ${md || '—'} ${yr}`;
 }
 
-// Prep Work
-function prepWork() {
-  const tb = q('#pdfWorkTBody');
+function prepExecutors() {
+  const tb = q('#pdfExecutorsTBody');
   if (!tb) return;
   tb.innerHTML = '';
   
-  qa('#workTable tbody tr').forEach((tr, idx) => {
-    if (idx % 2 === 0) {
-      const serviceName = tr.children[0]?.textContent?.trim() || '';
-      const r1 = document.createElement('tr');
-      r1.innerHTML = `<td rowspan="2">${serviceName}</td><td>Исполнитель 1</td><td></td><td></td><td></td>`;
-      tb.appendChild(r1);
-      
-      const r2 = document.createElement('tr');
-      r2.innerHTML = `<td>Исполнитель 2</td><td></td><td></td><td></td>`;
-      tb.appendChild(r2);
-    }
+  qa('#executorsContent .executor-row').forEach(row => {
+    const name = row.querySelector('.executor-row-header')?.textContent?.trim() || '';
+    const executor = row.querySelector('input[id*="name"]')?.value || '';
+    const receive = row.querySelector('input[id*="receive"]')?.value || '';
+    const returnDate = row.querySelector('input[id*="return"]')?.value || '';
+    const note = row.querySelector('input[id*="note"]')?.value || '';
+    
+    const r = document.createElement('tr');
+    r.innerHTML = `<td>${name}</td><td>${executor}</td><td>${receive}</td><td>${returnDate}</td><td>${note}</td>`;
+    tb.appendChild(r);
   });
   
   const br = q('#brandManual').classList.contains('invis') ? q('#brand').value : q('#brandManual').value;
   const md = q('#modelManual').classList.contains('invis') ? q('#model').value : q('#modelManual').value;
   const yr = q('#year').value || '—';
   
-  q('#pdfWorkMeta').textContent = `Автомобиль: ${br || '—'} ${md || '—'} ${yr}`;
+  q('#pdfExecutorsMeta').textContent = `Автомобиль: ${br || '—'} ${md || '—'} ${yr}`;
 }
 
-// Set Default Markups
 function setDefaultMarkups() {
-  ['#pkgMarkup', '#armMarkup', '#wrapMarkup', '#detMarkup', '#glMarkup', '#miscMarkup'].forEach(id => {
+  ['#pkgMarkup', '#impactMarkup', '#armMarkup', '#wrapMarkup', '#detMarkup', '#glMarkup', '#miscMarkup'].forEach(id => {
     const field = q(id);
     if (field) field.value = 40;
   });
 }
 
-// Format Number Input
 function formatNumberInput(input) {
   const val = parseFloat(input.value);
   if (!isNaN(val) && val >= 0) {
@@ -2627,9 +2783,7 @@ function formatNumberInput(input) {
   }
 }
 
-// DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
-  // Check Telegram
   const isTelegram = window.TelegramWebviewProxy !== undefined || navigator.userAgent.includes('Telegram');
   if (isTelegram) {
     const warning = q('#telegramWarning');
@@ -2654,16 +2808,23 @@ document.addEventListener('DOMContentLoaded', () => {
   q('#brand')?.addEventListener('change', onBrandChange);
   q('#model')?.addEventListener('change', onModelChange);
   
+  q('#btnAddPkgCost')?.addEventListener('click', () => addCostRow('pkg'));
+  q('#btnAddImpactCost')?.addEventListener('click', () => addCostRow('impact'));
   q('#btnAddArm')?.addEventListener('click', () => { addDynRow('#armDyn', 'arm'); initServiceToggles(); });
+  q('#btnAddArmCost')?.addEventListener('click', () => addCostRow('arm'));
   q('#btnAddWrap')?.addEventListener('click', () => { addDynRow('#wrapDyn', 'wrap'); initServiceToggles(); });
+  q('#btnAddWrapCost')?.addEventListener('click', () => addCostRow('wrap'));
   q('#btnAddDet')?.addEventListener('click', () => { addDynRow('#detDyn', 'det'); initServiceToggles(); });
+  q('#btnAddDetCost')?.addEventListener('click', () => addCostRow('det'));
   q('#btnAddGl')?.addEventListener('click', () => { addDynRow('#glDyn', 'gl'); initServiceToggles(); });
+  q('#btnAddGlCost')?.addEventListener('click', () => addCostRow('gl'));
   q('#btnAddMisc')?.addEventListener('click', () => { addDynRow('#miscDyn', 'misc'); initServiceToggles(); });
+  q('#btnAddMiscCost')?.addEventListener('click', () => addCostRow('misc'));
   
   qa('input[name=payMode]').forEach(r => r.addEventListener('change', renderAll));
   
-  q('#btnRecalc2')?.addEventListener('click', renderAll);
-  q('#btnReset2')?.addEventListener('click', () => {
+  q('#btnRecalc')?.addEventListener('click', renderAll);
+  q('#btnReset')?.addEventListener('click', () => {
     if (confirm('Вы уверены, что хотите сбросить все данные?')) location.reload();
   });
   
@@ -2703,9 +2864,9 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => exportPDF('#pdfCost', 'Себестоимость.pdf'), 100);
   });
   
-  q('#btnExportWork')?.addEventListener('click', () => {
-    prepWork();
-    setTimeout(() => exportPDF('#pdfWork', 'Перечень_работ.pdf'), 100);
+  q('#btnExportExecutors')?.addEventListener('click', () => {
+    prepExecutors();
+    setTimeout(() => exportPDF('#pdfExecutors', 'Список_исполнителей.pdf'), 100);
   });
   
   renderAll();
