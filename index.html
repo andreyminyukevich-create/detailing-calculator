@@ -1476,6 +1476,10 @@ tfoot th:first-child {
 #auth-ref-link a:hover {
   text-decoration: underline;
 }
+
+#app.auth-required {
+  display: none;
+}
 </style>
 </head>
 <body>
@@ -1502,7 +1506,7 @@ tfoot th:first-child {
   </div>
 </div>
 
-<div id="app">
+<div id="app" class="auth-required">
 <div class="top-bar">
   <h1>Калькулятор оклейки</h1>
   <div style="display:flex;align-items:center;gap:12px">
@@ -1936,8 +1940,15 @@ async function handleLogout() {
     if (userInfo) userInfo.style.display = 'none';
     if (logoutBtn) logoutBtn.style.display = 'none';
     
+    // Скрываем контент калькулятора
+    const app = document.getElementById('app');
+    if (app) app.classList.add('auth-required');
+    
     const overlay = document.getElementById('auth-overlay');
-    if (overlay) overlay.style.display = 'flex';
+    if (overlay) {
+      overlay.style.display = 'flex';
+      overlay.classList.remove('hidden');
+    }
     
     const denied = document.getElementById('auth-denied');
     if (denied) denied.style.display = 'none';
@@ -2014,10 +2025,22 @@ async function afterAuth(user) {
     }
 
     if (hasAccess) {
-      if (overlay) overlay.style.display = 'none';
+      if (overlay) {
+        overlay.style.display = 'none';
+        overlay.classList.add('hidden');
+      }
+      // Показываем контент калькулятора
+      const app = document.getElementById('app');
+      if (app) app.classList.remove('auth-required');
       displayUserInfo();
     } else {
-      if (overlay) overlay.style.display = 'flex';
+      if (overlay) {
+        overlay.style.display = 'flex';
+        overlay.classList.remove('hidden');
+      }
+      // Скрываем контент калькулятора
+      const app = document.getElementById('app');
+      if (app) app.classList.add('auth-required');
       if (denied) denied.style.display = 'block';
       if (authForm) authForm.style.display = 'none';
     }
@@ -2048,7 +2071,11 @@ async function initAuth() {
   const btnSignUp = document.getElementById('btn-signup');
   const btnLogout = document.getElementById('btn-logout');
 
-  if (overlay) overlay.style.display = 'flex';
+  // ВАЖНО: показываем overlay по умолчанию
+  if (overlay) {
+    overlay.style.display = 'flex';
+    overlay.classList.remove('hidden');
+  }
 
   try {
     const { data } = await sb.auth.getSession();
@@ -2058,6 +2085,11 @@ async function initAuth() {
     }
   } catch (e) {
     console.error('Session check error:', e);
+    // При ошибке показываем overlay
+    if (overlay) {
+      overlay.style.display = 'flex';
+      overlay.classList.remove('hidden');
+    }
   }
 
   if (btnSignIn) {
@@ -2937,6 +2969,14 @@ function renderExecutors(s) {
   const container = q('#executorsContent');
   if (!container) return;
   
+  // Сохраняем текущие значения перед перерисовкой
+  const savedValues = {};
+  container.querySelectorAll('input').forEach(inp => {
+    if (inp.id && inp.value) {
+      savedValues[inp.id] = inp.value;
+    }
+  });
+  
   let html = '';
   let execIndex = 0;
   
@@ -2973,13 +3013,18 @@ function renderExecutors(s) {
   });
   
   allServices.forEach(srv => {
+    const nameId = `exec${srv.idx}name`;
+    const receiveId = `exec${srv.idx}receive`;
+    const returnId = `exec${srv.idx}return`;
+    const noteId = `exec${srv.idx}note`;
+    
     html += `<div class="executor-row">
       <div class="executor-row-header">${srv.name}</div>
       <div class="executor-fields">
-        <input type="text" id="exec${srv.idx}name" placeholder="Исполнитель">
-        <input type="date" id="exec${srv.idx}receive" placeholder="Дата приема">
-        <input type="date" id="exec${srv.idx}return" placeholder="Дата выдачи">
-        <input type="text" id="exec${srv.idx}note" placeholder="Примечание">
+        <input type="text" id="${nameId}" placeholder="Исполнитель" value="${savedValues[nameId] || ''}">
+        <input type="date" id="${receiveId}" placeholder="Дата приема" value="${savedValues[receiveId] || ''}">
+        <input type="date" id="${returnId}" placeholder="Дата выдачи" value="${savedValues[returnId] || ''}">
+        <input type="text" id="${noteId}" placeholder="Примечание" value="${savedValues[noteId] || ''}">
       </div>
     </div>`;
   });
