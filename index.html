@@ -1963,15 +1963,33 @@ async function handleRegister() {
   }
   
   try {
+    console.log('=== НАЧАЛО РЕГИСТРАЦИИ ===');
+    console.log('Email:', email);
+    console.log('Studio:', studio);
+    
+    // Проверяем не существует ли уже профиль
+    console.log('Проверка существующего профиля...');
+    const { data: existingProfile } = await sb
+      .from('profiles')
+      .select('email')
+      .eq('email', email)
+      .single();
+    
+    if (existingProfile) {
+      showError('Пользователь с таким email уже существует! Попробуй войти.');
+      return;
+    }
+    
     // Регистрируем пользователя
+    console.log('Создание пользователя в Auth...');
     const { data, error } = await sb.auth.signUp({
       email,
       password: pass,
     });
     
     if (error) {
-      console.error('signUp error:', error);
-      showError(error.message || 'Ошибка регистрации');
+      console.error('Auth signUp error:', error);
+      showError('Ошибка регистрации: ' + error.message);
       return;
     }
     
@@ -1981,17 +1999,22 @@ async function handleRegister() {
       return;
     }
     
+    console.log('Пользователь создан:', user.email);
     currentUser = user;
     
     // Создаём профиль
     const { mode, ref } = getUrlParams();
+    console.log('URL params - mode:', mode, 'ref:', ref);
+    
     const now = new Date();
     const trialEnds = new Date(now.getTime() + 72 * 60 * 60 * 1000);
     
     // Генерируем реферальный код
     const referralCode = 'REF' + Math.random().toString(36).substring(2, 10).toUpperCase();
+    console.log('Реферальный код:', referralCode);
     
     const profileData = {
+      id: user.id, // Используем ID из auth.users
       email,
       studio_name: studio,
       is_paid: false,
@@ -2002,29 +2025,50 @@ async function handleRegister() {
     if (mode === 'trial') {
       profileData.trial_started_at = now.toISOString();
       profileData.trial_ends_at = trialEnds.toISOString();
+      console.log('Триал активирован до:', trialEnds.toISOString());
     }
     
     // Если пришёл по реферальной ссылке
     if (ref) {
       profileData.referred_by = ref;
+      console.log('Referred by:', ref);
     }
     
-    const { error: dbError } = await sb.from('profiles').insert(profileData);
+    console.log('Данные профиля для вставки:', profileData);
+    console.log('Вставка профиля в БД...');
+    
+    const { data: insertedProfile, error: dbError } = await sb
+      .from('profiles')
+      .insert(profileData)
+      .select()
+      .single();
     
     if (dbError) {
-      console.error('profiles insert error:', dbError);
-      showError('Ошибка создания профиля: ' + dbError.message);
+      console.error('=== ОШИБКА БД ===');
+      console.error('Error object:', dbError);
+      console.error('Error message:', dbError.message);
+      console.error('Error details:', dbError.details);
+      console.error('Error hint:', dbError.hint);
+      console.error('Error code:', dbError.code);
+      console.error('Profile data:', profileData);
+      
+      // Удаляем пользователя из auth если профиль не создался
+      console.log('Откат: удаление пользователя из auth...');
+      await sb.auth.admin.deleteUser(user.id).catch(e => console.error('Не удалось удалить:', e));
+      
+      showError(
+        'Ошибка БД: ' + (dbError.message || 'Unknown') + 
+        '\n' + (dbError.hint || '') +
+        '\nКод: ' + (dbError.code || 'N/A') +
+        '\n\nПопробуй: 1) Отключить RLS, 2) Проверить email не занят'
+      );
       return;
     }
     
-    // Загружаем созданный профиль
-    const { data: newProfile } = await sb
-      .from('profiles')
-      .select('*')
-      .eq('email', email)
-      .single();
+    console.log('=== ПРОФИЛЬ СОЗДАН УСПЕШНО ===');
+    console.log('Inserted profile:', insertedProfile);
     
-    currentProfile = newProfile;
+    currentProfile = insertedProfile;
     
     // Показываем реферальную ссылку
     if (refLink && referralCode) {
@@ -2044,6 +2088,8 @@ async function handleRegister() {
       trialInfo.style.display = 'block';
     }
     
+    console.log('Переход к калькулятору через 2 сек...');
+    
     // Даём время прочитать сообщения
     setTimeout(() => {
       if (mode === 'trial') {
@@ -2054,8 +2100,10 @@ async function handleRegister() {
     }, mode === 'trial' ? 2000 : 0);
     
   } catch (e) {
-    console.error('Register error:', e);
-    showError('Ошибка регистрации: ' + e.message);
+    console.error('=== НЕОЖИДАННАЯ ОШИБКА ===');
+    console.error('Exception:', e);
+    console.error('Stack:', e.stack);
+    showError('Критическая ошибка: ' + e.message + '\nСмотри консоль (F12)');
   }
 }
 
